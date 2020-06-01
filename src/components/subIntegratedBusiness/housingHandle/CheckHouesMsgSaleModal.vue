@@ -12,20 +12,39 @@
           <div>
           <a-row>
             <a-col :md="6" >
+              <!--废弃,员工id从后端cookie拿，从前端拿蠢得一批，正式环境删除
               <a-form-item label="员工ID" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
-                <a-input v-model="criteria.clientidStaffId"/>
+                <a-input v-model="criteria.clientStaffId"/>
+              </a-form-item>-->
+              <a-form-item label="房源ID" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
+                <a-input v-model="criteria.houseId"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" > 
+              <a-form-item label="房源小区" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
+                <a-input v-model="criteria.houseEstate"/>
+              </a-form-item>
             </a-col>
-            <a-col :md="6" >
-            </a-col>
-            <a-col :md="6" :sm="24">
-              
+            <a-col :md="8" >
+              <a-form-item label="房源位置" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
+              <a-select :default-value="provinceData[0]" style="width: 80px" @change="handleProvinceChange" v-model="criteria.houseLocationProvince">
+              <a-select-option v-for="province in provinceData" :key="province">
+              {{ province }}
+              </a-select-option>
+              </a-select>
+              <a-select v-model="criteria.houseLocationCity" style="width: 80px">
+              <a-select-option v-for="city in cities" :key="city">
+              {{ city }}
+              </a-select-option>
+              </a-select>
+              </a-form-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col :md="6" :sm="24">  
+              <a-form-item label="房源价格" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
+                
+              </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
             </a-col>
@@ -170,8 +189,8 @@ const columns = [
   },
   {
     title: '客户所属员工ID',
-    dataIndex: 'clientidStaffId',
-    key: 'clientidStaffId',
+    dataIndex: 'clientStaffId',
+    key: 'clientStaffId',
     width: 80
   },
   {
@@ -191,10 +210,8 @@ export default {
       columns: columns,
       dataSource: dataSource,
       loading: false,
-      caseHouseState: {
-          0: '待售',
-          1: '已售'
-      },
+      provinceData:[],
+      cities:[],
       pagination: 
       {
         total: 0,
@@ -235,7 +252,11 @@ export default {
         pager.sort = sorter.order == 'descend' ? 2 : 1
         this.pagination = pager
         this.reloadTable()
-    },
+      },
+      reset()
+      {
+        this.criteria={}
+      },
       reloadTable(pageNo)
       {
       const self = this
