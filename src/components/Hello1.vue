@@ -11,9 +11,9 @@
         <a-sub-menu key="subIntegratedBusiness">
           <span slot="title"><a-icon type="menu-unfold" /><span>综合业务</span></span>
           <a-sub-menu key="housingHandle"><span slot="title"><a-icon type="bank"/><span>房源管理</span></span>
-              <a-menu-item key="housingSaleHandle" @click="openHousingSaleModal">待售买卖房源</a-menu-item>
+              <a-menu-item key="housingSaleHandle" @click="openHousingSaleModal">买卖房源</a-menu-item>
               <CheckHouseMsgSaleModal ref="CheckHouseMsgSaleModal"></CheckHouseMsgSaleModal>
-              <a-menu-item key="housingRentHandle">待租租赁房源</a-menu-item>
+              <a-menu-item key="housingRentHandle">租赁房源</a-menu-item>
               <a-menu-item key="housingSaleReport">新买卖房源报备</a-menu-item>
               <a-menu-item key="housingRentReport">新租赁房源报备</a-menu-item>
           </a-sub-menu>

@@ -2,7 +2,6 @@
   <a-drawer
     title='待处理出售房源信息'
 	  width="80%"
-    @ok="()=>handleOk()"
     @close="()=>handleCancel()"
     :destroyOnClose="true"
 	  :visible=visible
@@ -12,50 +11,152 @@
           <div>
           <a-row>
             <a-col :md="6" >
-              <!--废弃,员工id从后端cookie拿，从前端拿蠢得一批，正式环境删除
-              <a-form-item label="员工ID" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
-                <a-input v-model="criteria.clientStaffId"/>
-              </a-form-item>-->
-              <a-form-item label="房源ID" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
-                <a-input v-model="criteria.houseId"/>
+              <a-form-item label="房源ID" :labelCol="{span: 4}" :wrapperCol="{span: 5, offset: 1}">
+              <a-input-number v-model="criteria.houseId"/>
               </a-form-item>
             </a-col>
-            <a-col :md="6" > 
-              <a-form-item label="房源小区" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
-                <a-input v-model="criteria.houseEstate"/>
+            <a-col :md="6" >
+              <a-form-item label="房源小区" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-input v-model="criteria.houseEstate"/>
               </a-form-item>
             </a-col>
-            <a-col :md="8" >
-              <a-form-item label="房源位置" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
-              <a-select :default-value="provinceData[0]" style="width: 80px" @change="handleProvinceChange" v-model="criteria.houseLocationProvince">
-              <a-select-option v-for="province in provinceData" :key="province">
-              {{ province }}
-              </a-select-option>
-              </a-select>
-              <a-select v-model="criteria.houseLocationCity" style="width: 80px">
-              <a-select-option v-for="city in cities" :key="city">
-              {{ city }}
-              </a-select-option>
-              </a-select>
+            <a-col :md="4" >
+              <a-form-item label="房源价格" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
+              <a-input-number v-model="criteria.startHousePrice"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="4">
+              <a-form-item label="至" :labelCol="{span: 3}" :wrapperCol="{span: 1, offset: 0}">
+              <a-input-number v-model="criteria.endHousePrice"/>
               </a-form-item>
             </a-col>
           </a-row>
           <a-row>
-            <a-col :md="6" :sm="24">  
-              <a-form-item label="房源价格" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
-                
+            <a-col :md="16" :sm="24">
+              <a-form-item label="位置" :labelCol="{span: 1}" :wrapperCol="{span: 14, offset: 1}">
+                <a-select 
+                id="houseLocationProvince"
+                style="width: 120px" 
+                showSearch
+                allowClear:true
+                ptionFilterProp="children"
+                @change="handleProvinceChange" 
+                @search="handleProvinceSearch"
+                :filterOption="filterOption"
+                v-model="criteria.houseLocationProvince">
+                  <a-select-option v-for="p in provinceData" :key="p" :value="p">
+                  {{p}}
+                  </a-select-option>
+                </a-select>
+                <a-select
+                id="houseLocationCity"
+                style="width: 120px" 
+                showSearch
+                ptionFilterProp="children"
+                @change="handleCityChange" 
+                @search="handleCitySearch"
+                @focus="handleCityFocus"
+                :filterOption="filterOption"
+                v-model="criteria.houseLocationCity">
+                  <a-select-option v-for="c in cityData" :key="c" :value="c">
+                  {{c}}
+                  </a-select-option>
+                </a-select>
+                <a-select
+                id="houseLocationDistrict" 
+                style="width: 120px"
+                showSearch
+                ptionFilterProp="children"
+                @change="handleDistrictChange" 
+                @search="handleDistrictSearch"
+                @focus="handleDistrictFocus"
+                :filterOption="filterOption"
+                v-model="criteria.houseLocationDistrict">
+                  <a-select-option v-for="d in districtData" :key="d" :value="d">
+                  {{d}}
+                  </a-select-option>
+                </a-select>
+                <a-select
+                id="houseLocationStreet" 
+                style="width: 120px"
+                showSearch
+                ptionFilterProp="children"
+                @change="handleStreetChange" 
+                @search="handleStreetSearch"
+                @focus="handleStreetFocus"
+                :filterOption="filterOption"
+                v-model="criteria.houseLocationStreet">
+                  <a-select-option v-for="s in streetData" :key="s" :value="s">
+                  {{s}}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+              </a-col>
+              <a-col :md="8" :sm="24">
+              <a-form-item label="面积" :labelCol="{span: 2}" :wrapperCol="{span: 14, offset: 1}">
+                <a-input-number v-model="criteria.startHouseSquare"/>
+                <a-input-number v-model="criteria.endHouseSquare"/>
+              </a-form-item>
+              </a-col>
+          </a-row>
+          <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="建成时间" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-input v-model="criteria.completeTime"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
+              <a-form-item label="客户名" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+                <a-input v-model="criteria.clientName"/>
+              </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
+              <a-form-item label="客户性别" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+                <a-select v-model="criteria.clientSex">
+                <a-select-option value="男">男</a-select-option>
+                <a-select-option value="女">女</a-select-option>
+                </a-select> 
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="客户电话" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+                <a-input v-model="criteria.clientPhone"/>
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="买方客户姓名" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+                <a-input v-model="criteria.wClientName"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="客户性别" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+                <a-select v-model="criteria.wClientSex">
+                <a-select-option value="男">男</a-select-option>
+                <a-select-option value="女">女</a-select-option>
+                </a-select> 
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="客户电话" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+                <a-input v-model="criteria.wClientPhone"/> 
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" :sm="24">
+              <a-form-item label="状态" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+                <a-select v-model="criteria.houseState">
+                <a-select-option value="0">待售</a-select-option>
+                <a-select-option value="1">已售</a-select-option>
+                </a-select> 
+              </a-form-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col :md="6">
-              <a-button type="primary"  @click="reloadTable(1)">查询</a-button>
-              <a-button  @click="reset()">重置</a-button>
-              <a-button type="primary"  @click="exportExcelDayliyBillRep()">导出</a-button>
+              <a-button type="primary" @click="reloadTable(1)">查询</a-button>
+              <a-button @click="reset()">重置</a-button>
+              <a-button>导出</a-button>
             </a-col>
           </a-row>
           </div>
@@ -162,12 +263,6 @@ const columns = [
     key: 'dealTime'
   },
   {
-    title: '(现)买方ID',
-    dataIndex: 'housePurachaserId',
-    key: 'housePurachaserId'
-  },
-  
-  {
     title: '(原业主)客户名',
     dataIndex: 'clientName',
     key: 'clientName'
@@ -176,11 +271,6 @@ const columns = [
     title: '客户性别',
     dataIndex: 'clientSex',
     key: 'clientSex'
-  },
-  {
-    title: '客户地址',
-    dataIndex: 'clientAddress',
-    key: 'clientAddress'
   },
   {
     title: '客户电话',
@@ -192,6 +282,26 @@ const columns = [
     dataIndex: 'clientStaffId',
     key: 'clientStaffId',
     width: 80
+  },
+  {
+    title: '(现)买方ID',
+    dataIndex: 'housePurachaserId',
+    key: 'housePurachaserId'
+  },
+  {
+    title: '客户名',
+    dataIndex: 'wClientName',
+    key: 'wClientName'
+  },
+  {
+    title: '客户性别',
+    dataIndex: 'wClientSex',
+    key: 'wClientSex'
+  },
+  {
+    title: '客户电话',
+    dataIndex: 'wClientPhone',
+    key: 'wClientPhone'
   },
   {
     title: '操作',
@@ -211,7 +321,10 @@ export default {
       dataSource: dataSource,
       loading: false,
       provinceData:[],
-      cities:[],
+      cityData:[],
+      districtData:[],
+      streetData:[],
+      streetData:[],
       pagination: 
       {
         total: 0,
@@ -228,54 +341,64 @@ export default {
   },
   mounted () 
   {
+    this.getProvince()
     
+  },
+  watch:
+  {
+    /*监听测试用
+    'criteria.houseLocationCity'(e)
+    {
+      console.log(e)
+    }
+    */
   },
   methods: 
   {
-      showModal()
-      {
-        this.visible = true
-      },
-      handleOk()
-      {
-        this.visible=false
-      },
-      handleCancel()
-      {
-        this.visible=false
-      },
-      handleTableChange(pagination, filters, sorter)
-      {
-        const pager = { ...this.pagination }
-        pager.current = pagination.current
-        pager.sortColumn = sorter.field
-        pager.sort = sorter.order == 'descend' ? 2 : 1
-        this.pagination = pager
-        this.reloadTable()
-      },
-      reset()
-      {
-        this.criteria={}
-      },
-      reloadTable(pageNo)
-      {
-      const self = this
-      const p = self.pagination
-      const currentPageNo = pageNo || p.current
-      const criteria = self.criteria
-      const pageReq = {
-        pagination: { totalSize: p.total, pageSize: p.pageSize, pageNo: currentPageNo, sortColumn: p.sortColumn, sort: p.sort },
-        criteria
-      }
-      console.log(JSON.stringify(pageReq))
-      axios({
-          url: "http://localhost:8080/v1/house/forSale/findPageHouseForSale",
-          method: "POST",
-          data:pageReq,
-          headers:
+    showModal()
+    {
+      this.visible = true
+    },
+    reset()
+    {
+      this.criteria={}
+    },
+    handleCancel()
+    {
+      this.visible=false
+    },
+    handleTableChange(pagination, filters, sorter)
+    {
+      const pager = { ...this.pagination }
+      pager.current = pagination.current
+      pager.sortColumn = sorter.field
+      pager.sort = sorter.order == 'descend' ? 2 : 1
+      this.pagination = pager
+      this.reloadTable()
+    },
+    reset()
+    {
+      this.criteria={}
+    },
+    reloadTable(pageNo)
+    {
+    const self = this
+    const p = self.pagination
+    const currentPageNo = pageNo || p.current
+    const criteria = self.criteria
+    const pageReq = {
+      pagination: { totalSize: p.total, pageSize: p.pageSize, pageNo: currentPageNo, sortColumn: p.sortColumn, sort: p.sort },
+      criteria
+    }
+    console.log(JSON.stringify(pageReq))
+    axios({
+        url: "http://localhost:8080/v1/house/forSale/findPageHouseForSale",
+        method: "POST",
+        data:pageReq,
+        headers:
           {
-            'Accept': 'application/json',
-          }
+          'Accept': 'application/json',
+          }
           }).then(res => {
           self.loading = false
           if (res.data) {
@@ -288,15 +411,59 @@ export default {
           } else {
             self.$message.error('获取数据错误')
           }
-        })
-        .catch(err => {
+          })
+          .catch(err => {
           self.loading = false
           self.$message.error('获取数据错误')
           console.log(`err is ${err}`)
-        })
-      },
-      // 导出到Excel
-    exportExcelDayliyBillRep () 
+          })
+    },
+    handleProvinceChange(value) 
+    {
+      this.criteria.houseLocationProvince=value
+    },
+    handleProvinceSearch()
+    {
+      this.getProvince()
+    },
+    handleCityChange(value) 
+    {
+      this.criteria.houseLocationCity=value
+    },
+    handleCitySearch()
+    {
+      this.getCity()
+    },
+    handleCityFocus()
+    {
+      this.getCity()
+    },
+    handleDistrictChange(value) 
+    {
+      this.criteria.houseLocationDistrict=value
+    },
+    handleDistrictSearch()
+    {
+      this.getDistrict()
+    },
+    handleDistrictFocus()
+    {
+      this.getDistrict()
+    },
+    handleStreetChange(value) 
+    {
+      this.criteria.houseLocationStreet=value
+    },
+    handleStreetSearch()
+    {
+      this.getStreet()
+    },
+    handleStreetFocus()
+    {
+      this.getStreet()
+    },
+    // 导出到Excel
+    exportExcelDayliyBillRep() 
     {
       
     },
@@ -304,7 +471,115 @@ export default {
     {
       
     },
+    getProvince()
+    {
+      let self=this
+      axios({
+          url: "http://localhost:8080/v1/sys/Site/findProvinceList",
+          method: "POST",
+          data:'',
+          headers:
+          {
+            'Accept': 'application/json',
+          }
+          }).then(res=>{
+          //console.log('province',res)
+          if (res) 
+          {
+          self.provinceData=res.data.data
+          }else
+          { 
+          self.provinceData=[]
+          self.$message.error('获取省级菜单失败'); 
+          console.log('province fail...',res)  
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
 
+    },
+    getCity()
+    {
+      let self=this
+      let province1=self.criteria.houseLocationProvince
+      axios({
+          url: "http://localhost:8080/v1/sys/Site/findCityList",
+          method: "POST",
+          data:province1,
+          headers:
+          {
+            'Accept': 'application/json',
+          }
+          }).then(res=>{
+          //console.log('city',res)
+          if (res.status==200) 
+          {
+          self.cityData=res.data.data
+          }else
+          { 
+          self.cityData=[]
+          self.$message.error('获取市菜单失败'); 
+          console.log('city fail...',res)  
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
+
+    },
+    getDistrict()
+    {
+      let self=this
+      let city1=self.criteria.houseLocationCity
+      axios({
+          url: "http://localhost:8080/v1/sys/Site/findDistrictList",
+          method: "POST",
+          data:city1,
+          headers:
+          {
+            'Accept': 'application/json',
+          }
+          }).then(res=>{
+          //console.log('district',res)
+          if (res.status==200) 
+          {
+          self.districtData=res.data.data
+          }else
+          { 
+          self.districtData=[]
+          self.$message.error('获取区菜单失败'); 
+          console.log('district fail...',res)  
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
+
+    },
+    getStreet()
+    {
+      let self=this
+      let district1=self.criteria.houseLocationDistrict
+      axios({
+          url: "http://localhost:8080/v1/sys/Site/findStreetList",
+          method: "POST",
+          data:district1,
+          headers:
+          {
+            'Accept': 'application/json',
+          }
+          }).then(res=>{
+          //console.log('street',res)
+          if (res.status==200) 
+          {
+          self.streetData=res.data.data
+          }else
+          { 
+          self.streetData=[]
+          self.$message.error('获取街菜单失败'); 
+          console.log('street fail...',res)  
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
+
+    },
+    filterOption(input, option) 
+    {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      );
+    },
   },
 
 }
