@@ -156,7 +156,7 @@
             <a-col :md="6">
               <a-button type="primary" @click="reloadTable(1)">查询</a-button>
               <a-button @click="reset()">重置</a-button>
-              <a-button>导出</a-button>
+              <a-button @click="exportExcelDayliyBillRep()">导出</a-button>
             </a-col>
           </a-row>
           </div>
@@ -186,7 +186,8 @@
 <script>
 import moment from 'moment'
 import VueCookies from 'vue-cookies'
-import {getCookie} from '../../../server/utils'
+import {getCookie} from '../../../utils/utils'
+import { copyReqObj, exportExcel } from '../../../utils/common_util'
 import axios from 'axios'
 const dataSource = []
 const columns = [
@@ -390,7 +391,7 @@ export default {
       pagination: { totalSize: p.total, pageSize: p.pageSize, pageNo: currentPageNo, sortColumn: p.sortColumn, sort: p.sort },
       criteria
     }
-    console.log(JSON.stringify(pageReq))
+    //console.log(JSON.stringify(pageReq))
     axios({
         url: "http://localhost:8080/v1/house/forSale/findPageHouseForSale",
         method: "POST",
@@ -402,19 +403,20 @@ export default {
           }).then(res => {
           self.loading = false
           if (res.data) {
-            console.log(res)
+
             const ret = res.data.data
             self.dataSource = ret.rows
             const pag = ret.pagination
             self.pagination = { total: pag.totalSize, pageSize: pag.pageSize, current: pag.pageNo }
-            console.info('pag--->', pag)
+            //console.info('pa--->', pag)
           } else {
             self.$message.error('获取数据错误')
           }
           })
           .catch(err => {
           self.loading = false
-          self.$message.error('获取数据错误')
+          //self.$message.error('获取数据错误')
+          self.$message.error('未登录')
           console.log(`err is ${err}`)
           })
     },
@@ -465,7 +467,36 @@ export default {
     // 导出到Excel
     exportExcelDayliyBillRep() 
     {
-      
+      let self=this
+      let req=this.criteria
+      let promise = new Promise( (resolve, reject) => {
+      axios({
+        url: "http://localhost:8080/v1/house/forSale/exportFindHouseForSale",
+        method: "POST",
+        data:req,
+        responseType: 'arraybuffer',
+        headers:
+          {
+          'Accept': 'application/json',
+          
+          }
+          }).then(res => {
+          self.loading = false
+          if (res.data) {
+          console.log('res????/',res)
+          self.loading = false
+          let headers1 = res.headers
+          exportExcel(res.data, headers1.filename)
+          console.log('headers.filename???',headers1.filename)
+          }
+          })
+          .catch(err => {
+          self.loading = false
+          self.$message.error('导出失败')
+          console.log(`err is ${err}`)
+          })
+      })
+        return promise
     },
     openUpdateHouse()
     {

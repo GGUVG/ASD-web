@@ -130,7 +130,7 @@ import CheckHouseMsgSaleModal from './subIntegratedBusiness/housingHandle/CheckH
 import StaffLogin from './StaffLogin'
 import Cookies from 'js-cookie'
 import VueCookies from 'vue-cookies'
-import { getCookie } from '../server/utils'
+import { getCookie } from '../utils/utils'
 
 export default {
   name: 'Hello1',

@@ -22,7 +22,7 @@ import moment from 'moment'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import VueCookies from 'vue-cookies'
-import {getAppointCookie} from '../server/utils'
+import {getAppointCookie} from '../utils/utils'
 import JSON from 'JSON'
 
 //https://www.jianshu.com/p/8deae75624eb
@@ -75,7 +75,6 @@ export default {
           let originalCookie=getAppointCookie('backStaffCookie')//原始cookie
           let transcodeCookie=decodeURIComponent(originalCookie)//转码后人能看得懂的字符串
           let staffMsg = JSON.parse(transcodeCookie)//转json对象，就能拿里面的各项属性值
-          let staffIdMsg=staffMsg.staffUsername//我这里拿个ID，爱拿什么拿什么你自己改
           }else
           { 
           self.$message.error('fail'); 
