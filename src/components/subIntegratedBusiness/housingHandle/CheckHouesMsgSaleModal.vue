@@ -477,17 +477,14 @@ export default {
         responseType: 'arraybuffer',
         headers:
           {
-          'Accept': 'application/json',
-          
+          'Accept': 'application/json', 
           }
           }).then(res => {
           self.loading = false
           if (res.data) {
-          console.log('res????/',res)
           self.loading = false
-          let headers1 = res.headers
-          exportExcel(res.data, headers1.filename)
-          console.log('headers.filename???',headers1.filename)
+          let headers1 = res.headers.filename
+           exportExcel(res.data, headers1)
           }
           })
           .catch(err => {
