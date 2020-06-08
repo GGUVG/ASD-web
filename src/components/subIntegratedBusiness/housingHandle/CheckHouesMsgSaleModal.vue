@@ -391,7 +391,6 @@ export default {
       pagination: { totalSize: p.total, pageSize: p.pageSize, pageNo: currentPageNo, sortColumn: p.sortColumn, sort: p.sort },
       criteria
     }
-    //console.log(JSON.stringify(pageReq))
     axios({
         url: "http://localhost:8080/v1/house/forSale/findPageHouseForSale",
         method: "POST",
@@ -408,14 +407,12 @@ export default {
             self.dataSource = ret.rows
             const pag = ret.pagination
             self.pagination = { total: pag.totalSize, pageSize: pag.pageSize, current: pag.pageNo }
-            //console.info('pa--->', pag)
           } else {
             self.$message.error('获取数据错误')
           }
           })
           .catch(err => {
           self.loading = false
-          //self.$message.error('获取数据错误')
           self.$message.error('未登录')
           console.log(`err is ${err}`)
           })
@@ -484,7 +481,7 @@ export default {
           if (res.data) {
           self.loading = false
           let headers1 = res.headers.filename
-           exportExcel(res.data, headers1)
+          exportExcel(res.data, headers1)
           }
           })
           .catch(err => {
@@ -511,7 +508,6 @@ export default {
             'Accept': 'application/json',
           }
           }).then(res=>{
-          //console.log('province',res)
           if (res) 
           {
           self.provinceData=res.data.data
@@ -537,7 +533,6 @@ export default {
             'Accept': 'application/json',
           }
           }).then(res=>{
-          //console.log('city',res)
           if (res.status==200) 
           {
           self.cityData=res.data.data
@@ -563,7 +558,6 @@ export default {
             'Accept': 'application/json',
           }
           }).then(res=>{
-          //console.log('district',res)
           if (res.status==200) 
           {
           self.districtData=res.data.data
@@ -589,7 +583,6 @@ export default {
             'Accept': 'application/json',
           }
           }).then(res=>{
-          //console.log('street',res)
           if (res.status==200) 
           {
           self.streetData=res.data.data
