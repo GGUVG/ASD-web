@@ -16,8 +16,8 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" >
-              <a-form-item label="房源小区" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
-              <a-input v-model="criteria.houseEstate"/>
+              <a-form-item label="小区名" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-input v-model="criteria.estateName"/>
               </a-form-item>
             </a-col>
             <a-col :md="4" >
@@ -203,14 +203,14 @@ const columns = [
     title: '门牌号',
     dataIndex: 'houseName',
     key: 'houseName',
-    width: 150,
+    width: 100,
     fixed: 'left'
     
   },
   {
     title: '小区名',
-    dataIndex: 'houseEstate',
-    key: 'houseEstate'
+    dataIndex: 'estateName',
+    key: 'estateName'
   },
   {
     title: '省',
