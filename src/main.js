@@ -12,7 +12,7 @@ import 'ant-design-vue/dist/antd.css'
 Vue.use(ant)
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
-axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
+//axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
 axios.defaults.withCredentials = true
 /* eslint-disable no-new */
 new Vue({

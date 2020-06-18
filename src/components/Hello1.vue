@@ -1,5 +1,5 @@
 <template>
-  <a-layout id="components-layout-demo-side" style="min-height: 100vh">
+  <a-layout id="components-layout-demo-custom-trigger"  >
     
     <a-layout-sider v-model="collapsed" collapsible>
       <div class="logo" />
@@ -104,7 +104,7 @@
     </a-layout-sider>
     <a-layout>
       <a-layout-header style="background: #fff; padding: 0">
-        <a-icon
+        <a-icon 
           class="trigger"
           :type="collapsed ? 'menu-unfold' : 'menu-fold'"
           @click="() => (collapsed = !collapsed)"
@@ -127,7 +127,7 @@
 import axios from 'axios';
 axios.defaults.withCredentials = true;// 允许跨域携带cookie
 import CheckHouseMsgSaleModal from './subIntegratedBusiness/housingHandle/CheckHouesMsgSaleModal';
-import StaffLogin from './StaffLogin'
+import StaffLogin from './StaffLogin.vue'
 import Cookies from 'js-cookie'
 import VueCookies from 'vue-cookies'
 import { getCookie } from '../utils/utils'
@@ -217,9 +217,25 @@ export default {
 </script>
 
 <style>
-#components-layout-demo-side .logo {
+
+#components-layout-demo-custom-trigger .logo {
   height: 32px;
   background: rgba(255, 255, 255, 0.2);
   margin: 16px;
 }
+
+#components-layout-demo-custom-trigger .trigger {
+  font-size: 18px;
+  line-height: 64px;
+  padding: 0 24px;
+  cursor: pointer;
+  transition: color 0.3s;
+  position: relative;
+  left: -48%;
+}
+
+#components-layout-demo-custom-trigger .trigger:hover {
+  color: #1890ff;
+}
+
 </style>

@@ -9,13 +9,14 @@
 
 <script>
 import Hello1 from './components/Hello1'
+import StaffLogin from './components/StaffLogin'
 import Vue from 'Vue'
 import VueCookies from 'vue-cookies'
 Vue.use(VueCookies)
 export default {
   name: 'App',
   components:{
-    Hello1
+    Hello1,StaffLogin
   }
 }
 </script>
@@ -27,6 +28,6 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+  /* margin-top: 60px; */
 }
 </style>

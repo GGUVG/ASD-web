@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title='待处理出售房源信息'
+    title='待处理出售房源信息原版'
 	  width="80%"
     @close="()=>handleCancel()"
     :destroyOnClose="true"
@@ -224,8 +224,7 @@ import VueCookies from 'vue-cookies'
 import {getCookie} from '../../../utils/utils'
 import { copyReqObj, exportExcel } from '../../../utils/common_util'
 import axios from 'axios'
-import {findBySearch,exportBySearch,findProvinceList,findCityList,findDistrictList,
-findStreetList } from '../housingHandle/CheckHouseMsgSaleModalService'
+import {findBySearch,exportBySearch} from '../housingHandle/CheckHouseMsgSaleModal'
 const dataSource = []
 const columns = [
 
@@ -432,10 +431,19 @@ export default {
       pagination: { totalSize: p.total, pageSize: p.pageSize, pageNo: currentPageNo, sortColumn: p.sortColumn, sort: p.sort },
       criteria
     }
-        findBySearch(pageReq).then(res => {
+        axios({
+        url: "http://localhost:8080/v1/house/forSale/findPageHouseForSale",
+        method: "POST",
+        data:pageReq,
+        headers:
+          {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=utf-8'
+          }
+          }).then(res => {
           self.loading = false
-          if (res.data) {
-            const ret = res.data
+          if (res.data.data) {
+            const ret = res.data.data
             self.dataSource = ret.rows
             const pag = ret.pagination
             self.pagination = { total: pag.totalSize, pageSize: pag.pageSize, current: pag.pageNo }
@@ -506,13 +514,23 @@ export default {
     {
       let self=this
       let req=this.criteria
-        exportBySearch(req).then(res => {
+      let promise = new Promise( (resolve, reject) => {
+      axios({
+        url: "http://localhost:8080/v1/house/forSale/exportFindHouseForSale",
+        method: "POST",
+        data:req,
+        responseType: 'arraybuffer',
+        headers:
+          {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=utf-8'
+          }
+          }).then(res => {
           self.loading = false
           if (res.data) {
-          console.log('cccccc',res)
+          self.loading = false
           let headers1 = res.headers.filename
           exportExcel(res.data, headers1)
-          self.loading = false
           }
           })
           .catch(err => {
@@ -520,6 +538,8 @@ export default {
           self.$message.error('导出失败')
           console.log(`err is ${err}`)
           })
+      })
+        return promise
     },
     openUpdateHouse()
     {
@@ -528,10 +548,19 @@ export default {
     getProvince()
     {
       let self=this
-     findProvinceList().then(res=>{
+      axios({
+          url: "http://localhost:8080/v1/sys/Site/findProvinceList",
+          method: "POST",
+          data:'',
+          headers:
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
+          }
+          }).then(res=>{
           if (res) 
           {
-          self.provinceData=res.data
+          self.provinceData=res.data.data
           }else
           { 
           self.provinceData=[]
@@ -545,10 +574,19 @@ export default {
     {
       let self=this
       let province1=self.criteria.houseLocationProvince
-      findCityList (province1).then(res=>{
-          if (res.status==0) 
+      axios({
+          url: "http://localhost:8080/v1/sys/Site/findCityList",
+          method: "POST",
+          data:province1,
+          headers:
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
+          }
+          }).then(res=>{
+          if (res.status==200) 
           {
-          self.cityData=res.data
+          self.cityData=res.data.data
           }else
           { 
           self.cityData=[]
@@ -562,10 +600,19 @@ export default {
     {
       let self=this
       let city1=self.criteria.houseLocationCity
-      findDistrictList(city1).then(res=>{
-          if (res.status==0) 
+      axios({
+          url: "http://localhost:8080/v1/sys/Site/findDistrictList",
+          method: "POST",
+          data:city1,
+          headers:
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
+          }
+          }).then(res=>{
+          if (res.status==200) 
           {
-          self.districtData=res.data
+          self.districtData=res.data.data
           }else
           { 
           self.districtData=[]
@@ -579,10 +626,19 @@ export default {
     {
       let self=this
       let district1=self.criteria.houseLocationDistrict
-      findStreetList(district1).then(res=>{
-          if (res.status==0) 
+      axios({
+          url: "http://localhost:8080/v1/sys/Site/findStreetList",
+          method: "POST",
+          data:district1,
+          headers:
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8'
+          }
+          }).then(res=>{
+          if (res.status==200) 
           {
-          self.streetData=res.data
+          self.streetData=res.data.data
           }else
           { 
           self.streetData=[]

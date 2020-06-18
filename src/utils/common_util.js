@@ -1,6 +1,16 @@
 import { request, appendApiPrefix, appendDolphinApiPrefix } from './RestClient'
 const moment = require('moment')
 
+//获取cookie
+export function getAppointCookie(name) {
+  var arr, reg = new RegExp("(^| )" + name + "=([^;]*)(;|$)");
+  if (arr = document.cookie.match(reg))
+  return (arr[2]);
+  else
+  return null;
+  }
+
+//空字符串转null
 export function copyReqObj (reqObj) {
   const resultObj = {}
   for (const key in reqObj) {

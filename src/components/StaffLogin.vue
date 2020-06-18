@@ -22,10 +22,10 @@ import moment from 'moment'
 import axios from 'axios'
 import Cookies from 'js-cookie'
 import VueCookies from 'vue-cookies'
-import {getAppointCookie} from '../utils/utils'
+import {getAppointCookie} from '../utils/common_util'
+import {loginRequest} from '../components/StaffLoginService'
 import JSON from 'JSON'
 
-//https://www.jianshu.com/p/8deae75624eb
 export default {
     name: 'StaffLogin',
   data () 
@@ -55,30 +55,25 @@ export default {
           staffId:self.staffID,
           staffPassword:self.staffPassword
         }
-        axios({
-          url: "http://localhost:8080/v1/staff/staffLogin",
-          method: "POST",
-          data:tmp,
-          headers:
-          {
-            'Accept': 'application/json',
-          }
-          }).then(res=>{
-          if (res.data.data!=null) 
+        loginRequest(tmp).then(res=>{
+          if (res.data!=null) 
           {
           self.$message.success('success')
-          console.log(res)
+          //console.log(res)
           /*
           最好别用前端设置cookie
           VueCookies.set('staffCookie',res.data.data)
           */
+          /*
           let originalCookie=getAppointCookie('backStaffCookie')//原始cookie
           let transcodeCookie=decodeURIComponent(originalCookie)//转码后人能看得懂的字符串
           let staffMsg = JSON.parse(transcodeCookie)//转json对象，就能拿里面的各项属性值
+          */
           }else
           { 
           self.$message.error('fail'); 
           console.log('用户不存在或密码错误',res)  
+          console.log(res)
           }
                        }).catch(err => {console.log(`err is ${err}`)})
       },
