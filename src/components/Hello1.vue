@@ -13,7 +13,8 @@
           <a-sub-menu key="housingHandle"><span slot="title"><a-icon type="bank"/><span>房源管理</span></span>
               <a-menu-item key="housingSaleHandle" @click="openHousingSaleModal">买卖房源</a-menu-item>
               <CheckHouseMsgSaleModal ref="CheckHouseMsgSaleModal"></CheckHouseMsgSaleModal>
-              <a-menu-item key="housingRentHandle">租赁房源</a-menu-item>
+              <a-menu-item key="housingRentHandle" @click="openHousingRentModal">租赁房源</a-menu-item>
+              <CheckHouseMsgRentModal ref="CheckHouseMsgRentModal"></CheckHouseMsgRentModal>
               <a-menu-item key="housingSaleReport">新买卖房源报备</a-menu-item>
               <a-menu-item key="housingRentReport">新租赁房源报备</a-menu-item>
           </a-sub-menu>
@@ -127,6 +128,7 @@
 import axios from 'axios';
 axios.defaults.withCredentials = true;// 允许跨域携带cookie
 import CheckHouseMsgSaleModal from './subIntegratedBusiness/housingHandle/CheckHouesMsgSaleModal';
+import CheckHouseMsgRentModal from './subIntegratedBusiness/housingHandle/CheckHouesMsgRentModal';
 import StaffLogin from './StaffLogin.vue'
 import Cookies from 'js-cookie'
 import VueCookies from 'vue-cookies'
@@ -135,7 +137,7 @@ import { getCookie } from '../utils/utils'
 export default {
   name: 'Hello1',
   components: {
-    CheckHouseMsgSaleModal,StaffLogin,
+    CheckHouseMsgSaleModal,CheckHouseMsgRentModal,StaffLogin,
   },
   data() {
     return {
@@ -206,6 +208,10 @@ export default {
     openHousingSaleModal()
     {
       this.$refs.CheckHouseMsgSaleModal.showModal()
+    },
+    openHousingRentModal()
+    {
+      this.$refs.CheckHouseMsgRentModal.showModal()
     },
     checkCookie()
     {
