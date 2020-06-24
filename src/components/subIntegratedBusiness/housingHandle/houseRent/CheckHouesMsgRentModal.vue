@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title='待处理出售房源信息原版'
+    title='租赁房源信息'
 	  width="80%"
     @close="()=>handleCancel()"
     :destroyOnClose="true"
@@ -126,7 +126,7 @@
           </a-row>
           <a-row>
             <a-col :md="6" :sm="24">
-              <a-form-item label="买方客户姓名" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-item label="租客客户姓名" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
                 <a-input v-model="criteria.wClientName"/>
               </a-form-item>
             </a-col>
@@ -146,8 +146,8 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="状态" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
                 <a-select v-model="criteria.houseState">
-                <a-select-option value="0">待售</a-select-option>
-                <a-select-option value="1">已售</a-select-option>
+                <a-select-option value="0">待租</a-select-option>
+                <a-select-option value="1">已租</a-select-option>
                 </a-select> 
               </a-form-item>
             </a-col>
@@ -172,17 +172,19 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="未定" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
-                
+              <a-form-item label="最近租期到期" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
+                <a-date-picker v-model="criteria.startLastEnd"/>
+                <a-date-picker v-model="criteria.endLastEnd"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="未定" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
-                <a-input/> 
+              <a-form-item label="最近交易时间" :labelCol="{span: 7}" :wrapperCol="{span: 14, offset: 1}">
+                <a-date-picker v-model="criteria.startLastDeal"/>
+                <a-date-picker v-model="criteria.endLastDeal"/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="未定" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-item label="" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
                
               </a-form-item>
             </a-col>
@@ -191,7 +193,7 @@
             <a-col :md="6">
               <a-button type="primary" @click="reloadTable(1)">查询</a-button>
               <a-button @click="reset()">重置</a-button>
-              <a-button @click="exportExcelDayliyBillRep()">导出</a-button>
+              <a-button @click="exportExcelHouseRentMsg()">导出</a-button>
             </a-col>
           </a-row>
           </div>
@@ -208,8 +210,8 @@
               size="middle"
               :scroll="{ x: 2400 }">
               <span slot="switchHouseState" slot-scope="record">
-              <span v-if='record===0'>待售</span>
-              <span v-if='record===1'>已售</span>
+              <span v-if='record===0'>待租</span>
+              <span v-if='record===1'>已租</span>
               </span>
               <span slot="action" slot-scope="record">
               <a href="javascript:;" @click="openUpdateHouse(record)">修改</a>
@@ -221,10 +223,10 @@
 <script>
 import moment from 'moment'
 import VueCookies from 'vue-cookies'
-import {getCookie} from '../../../utils/utils'
-import { copyReqObj, exportExcel } from '../../../utils/common_util'
+import { copyReqObj, exportExcel,getAppointCookie } from '../../../../utils/common_util'
 import axios from 'axios'
-import {findBySearch,exportBySearch} from '../housingHandle/CheckHouseMsgSaleModal'
+import {findBySearch,exportBySearch,findProvinceList,findCityList,findDistrictList,
+findStreetList,findHouseType } from '../houseRent/CheckHouseMsgRentService'
 const dataSource = []
 const columns = [
 
@@ -275,8 +277,8 @@ const columns = [
   },
   {
     title: '房屋类型',
-    dataIndex: 'houseTypeName',
-    key: 'houseTypeName'
+    dataIndex: 'houseTypeTxt',
+    key: 'houseTypeTxt'
   },
   {
     title: '面积/平',
@@ -290,7 +292,7 @@ const columns = [
     scopedSlots: { customRender: 'switchHouseState' },
   },
   {
-    title: '原业主客户ID',
+    title: '房东客户ID',
     dataIndex: 'houseClientId',
     key: 'houseClientId'
   },
@@ -300,48 +302,52 @@ const columns = [
     key: 'completeTime'
   },
   {
-    title: '交易时间',
-    dataIndex: 'dealTime',
-    key: 'dealTime'
+    title: '最近交易',
+    dataIndex: 'lastDealTime',
+    key: 'lastDealTime'
   },
   {
-    title: '(原业主)客户名',
+    title: '最近租期到期',
+    dataIndex: 'lastEnd',
+    key: 'lastEnd'
+  },
+  {
+    title: '房东客户名',
     dataIndex: 'clientName',
     key: 'clientName'
   },
   {
-    title: '客户性别',
+    title: '房东客户性别',
     dataIndex: 'clientSex',
     key: 'clientSex'
   },
   {
-    title: '客户电话',
+    title: '房东客户电话',
     dataIndex: 'clientPhone',
     key: 'clientPhone'
   },
   {
     title: '客户所属员工ID',
     dataIndex: 'clientStaffId',
-    key: 'clientStaffId',
-    width: 80
+    key: 'clientStaffId'
   },
   {
-    title: '(现)买方ID',
+    title: '租客ID',
     dataIndex: 'housePurachaserId',
     key: 'housePurachaserId'
   },
   {
-    title: '客户名',
+    title: '租客客户名',
     dataIndex: 'wClientName',
     key: 'wClientName'
   },
   {
-    title: '客户性别',
+    title: '租客客户性别',
     dataIndex: 'wClientSex',
     key: 'wClientSex'
   },
   {
-    title: '客户电话',
+    title: '租客客户电话',
     dataIndex: 'wClientPhone',
     key: 'wClientPhone'
   },
@@ -354,7 +360,7 @@ const columns = [
   }
 ]
 export default {
-    name: 'CheckHouseMsgSaleModal',
+    name: 'CheckHouseMsgRentModal',
   data () 
   {
     return {
@@ -377,7 +383,10 @@ export default {
       },
       criteria: 
       {
-
+        startLastEnd:moment().subtract(3,'months').startOf('month'),//moment(new Date(), 'yyyy-MM-dd')
+        endLastEnd:moment().endOf('month'),
+        startLastDeal:moment().subtract(1,'months').startOf('month'),
+        endLastDeal:moment().endOf('month')
       }
     }
   },
@@ -388,11 +397,6 @@ export default {
   },
   watch:
   {
-    /*监听测试用
-    'criteria.houseLocationCity'(e)
-    {
-    }
-    */
   },
   methods: 
   {
@@ -431,19 +435,10 @@ export default {
       pagination: { totalSize: p.total, pageSize: p.pageSize, pageNo: currentPageNo, sortColumn: p.sortColumn, sort: p.sort },
       criteria
     }
-        axios({
-        url: "http://localhost:8080/v1/house/forSale/findPageHouseForSale",
-        method: "POST",
-        data:pageReq,
-        headers:
-          {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json; charset=utf-8'
-          }
-          }).then(res => {
+        findBySearch(pageReq).then(res => {
           self.loading = false
-          if (res.data.data) {
-            const ret = res.data.data
+          if (res.data) {
+            const ret = res.data
             self.dataSource = ret.rows
             const pag = ret.pagination
             self.pagination = { total: pag.totalSize, pageSize: pag.pageSize, current: pag.pageNo }
@@ -510,27 +505,16 @@ export default {
       this.getHouseType()
     },
     // 导出到Excel
-    exportExcelDayliyBillRep() 
+    exportExcelHouseRentMsg() 
     {
       let self=this
       let req=this.criteria
-      let promise = new Promise( (resolve, reject) => {
-      axios({
-        url: "http://localhost:8080/v1/house/forSale/exportFindHouseForSale",
-        method: "POST",
-        data:req,
-        responseType: 'arraybuffer',
-        headers:
-          {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json; charset=utf-8'
-          }
-          }).then(res => {
+        exportBySearch(req).then(res => {
           self.loading = false
           if (res.data) {
-          self.loading = false
           let headers1 = res.headers.filename
           exportExcel(res.data, headers1)
+          self.loading = false
           }
           })
           .catch(err => {
@@ -538,8 +522,6 @@ export default {
           self.$message.error('导出失败')
           console.log(`err is ${err}`)
           })
-      })
-        return promise
     },
     openUpdateHouse()
     {
@@ -548,19 +530,10 @@ export default {
     getProvince()
     {
       let self=this
-      axios({
-          url: "http://localhost:8080/v1/sys/Site/findProvinceList",
-          method: "POST",
-          data:'',
-          headers:
-          {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json; charset=utf-8'
-          }
-          }).then(res=>{
+     findProvinceList().then(res=>{
           if (res) 
           {
-          self.provinceData=res.data.data
+          self.provinceData=res.data
           }else
           { 
           self.provinceData=[]
@@ -574,19 +547,10 @@ export default {
     {
       let self=this
       let province1=self.criteria.houseLocationProvince
-      axios({
-          url: "http://localhost:8080/v1/sys/Site/findCityList",
-          method: "POST",
-          data:province1,
-          headers:
-          {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json; charset=utf-8'
-          }
-          }).then(res=>{
-          if (res.status==200) 
+      findCityList (province1).then(res=>{
+          if (res.status==0) 
           {
-          self.cityData=res.data.data
+          self.cityData=res.data
           }else
           { 
           self.cityData=[]
@@ -600,19 +564,10 @@ export default {
     {
       let self=this
       let city1=self.criteria.houseLocationCity
-      axios({
-          url: "http://localhost:8080/v1/sys/Site/findDistrictList",
-          method: "POST",
-          data:city1,
-          headers:
-          {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json; charset=utf-8'
-          }
-          }).then(res=>{
-          if (res.status==200) 
+      findDistrictList(city1).then(res=>{
+          if (res.status==0) 
           {
-          self.districtData=res.data.data
+          self.districtData=res.data
           }else
           { 
           self.districtData=[]
@@ -626,19 +581,10 @@ export default {
     {
       let self=this
       let district1=self.criteria.houseLocationDistrict
-      axios({
-          url: "http://localhost:8080/v1/sys/Site/findStreetList",
-          method: "POST",
-          data:district1,
-          headers:
-          {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json; charset=utf-8'
-          }
-          }).then(res=>{
-          if (res.status==200) 
+      findStreetList(district1).then(res=>{
+          if (res.status==0) 
           {
-          self.streetData=res.data.data
+          self.streetData=res.data
           }else
           { 
           self.streetData=[]
@@ -651,23 +597,15 @@ export default {
     getHouseType()
     {
       let self=this
-      axios({
-          url: "http://localhost:8080/v1/sys/HouseType/findHouseType",
-          method: "POST",
-          headers:
-          {
-            'Accept': 'application/json',
-            'Content-Type': 'application/json; charset=utf-8'
-          }
-          }).then(res=>{
-          if (res.status==200) 
+      findHouseType().then(res=>{
+          if (res.status==0) 
           {
-          self.houseTypeList=res.data.data
+          self.houseTypeList=res.data
           }else
           { 
           self.houseTypeList=[]
           self.$message.error('获取房屋类型列表失败'); 
-          console.log('street fail...',res)  
+          console.log('get houseType fail...',res)  
           }
           }).catch(err => {console.log(`err is ${err}`)})
 

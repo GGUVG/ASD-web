@@ -221,11 +221,10 @@
 <script>
 import moment from 'moment'
 import VueCookies from 'vue-cookies'
-import {getCookie} from '../../../utils/utils'
-import { copyReqObj, exportExcel } from '../../../utils/common_util'
+import { copyReqObj, exportExcel,getAppointCookie } from '../../../../utils/common_util'
 import axios from 'axios'
 import {findBySearch,exportBySearch,findProvinceList,findCityList,findDistrictList,
-findStreetList,findHouseType } from '../housingHandle/CheckHouseMsgSaleModalService'
+findStreetList,findHouseType } from '../houseSale/CheckHouseMsgSaleService'
 const dataSource = []
 const columns = [
 
