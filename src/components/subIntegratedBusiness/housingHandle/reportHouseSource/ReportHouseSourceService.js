@@ -16,7 +16,9 @@ export function addHouseSource(Req) {
 export function uploadHouseSaleFile (Req) {
   return request(('http://localhost:8080/v1/house/forSale/uploadHouseSaleFile'), {
     method: 'POST',
-    data: Req
+    data: Req,
+    headers:{
+    'Content-Type': 'multipart/form-data'}
   })
 }
 

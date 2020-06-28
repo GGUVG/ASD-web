@@ -15,15 +15,15 @@ function pureOptions (options) {
 
   const newOptions = { ...opt }
   if (newOptions.method === 'POST' || newOptions.method === 'PUT') {
-    if (!(newOptions.body instanceof FormData)) {
+    if (!(newOptions.data instanceof FormData)) {
       newOptions.headers = {
         Accept: 'application/json',
         'Content-Type': 'application/json; charset=utf-8',
         ...newOptions.headers
       }
-      newOptions.body = JSON.stringify(newOptions.body)
+      newOptions.data = JSON.stringify(newOptions.data)
     } else {
-      // newOptions.body is FormData
+      // newOptions.data is FormData
       newOptions.headers = {
         Accept: 'application/json',
         ...newOptions.headers
@@ -41,7 +41,6 @@ function pureOptions (options) {
  */
 function request (url, options) {
   const newOptions = pureOptions(options)
-
   const promise = new Promise(function (resolve, reject) {
     axios({
       url: url,

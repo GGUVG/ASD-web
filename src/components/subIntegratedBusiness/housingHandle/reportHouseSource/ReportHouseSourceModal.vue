@@ -124,6 +124,7 @@
                 :headers="headersUpload"
                 @change="handleChange"
                 :remove="removeUploadFile"
+                :before-upload="beforeUpload"
                 >
                 <a-button> <a-icon type="upload" /> Click to Upload </a-button>
                 </a-upload>
@@ -164,6 +165,7 @@
           </a-row>
           <a-row>
             <a-col :md="6">
+              <a-button type="primary" @click="handleUpload()">Start Upload</a-button>
               <a-button type="primary" @click="submitNewHouse()">提交</a-button>
               <a-button @click="reset()">重置</a-button>
             </a-col>
@@ -197,10 +199,10 @@ export default {
 
       },
       name:'',
-      headersUpload:{
-
-      },
+      headersUpload:{},
       delInfoName:'',
+      uploadStatus:true,
+      fileList:[]
     }
   },
   mounted () 
@@ -213,9 +215,6 @@ export default {
   },
   methods: 
   {
-    beforeUpload(e){
-      console.log(e)
-    },
     showModal()
     {
       this.visible = true
@@ -416,6 +415,32 @@ export default {
           console.log('del uploadFile fail...',res)  
           }
           }).catch(err => {console.log(`err is ${err}`)})
+    },
+    beforeUpload(file) 
+    {
+      this.fileList = [...this.fileList, file];
+      return false;
+    },
+    handleUpload()
+    {
+      let self=this
+      let fileList = self.fileList;
+      let formData = new FormData();
+      fileList.forEach(file => {
+        formData.append('newFile1', file);
+        formData.append('houseLocationProvince', self.criteria.houseLocationProvince);
+      });
+      uploadHouseSaleFile(formData).then( (res) =>{
+        if (res=='success') 
+          {
+          self.fileList = [];
+          self.$message.success('上传成功');
+          }else
+          {
+          self.$message.error('上传失败'); 
+          console.log('uploadFile fail...',res)  
+          }
+      }).catch(err => {console.log(`err is ${err}`)})
     },
 
   },
