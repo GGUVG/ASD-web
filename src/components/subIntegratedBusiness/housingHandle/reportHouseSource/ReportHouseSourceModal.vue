@@ -117,11 +117,13 @@
             <a-col :md="6" :sm="24">
               <a-form-item label="委托书材料1" :labelCol="{span: 6}" :wrapperCol="{span: 14, offset: 1}">
                 <a-upload
-                name="file"
-                :multiple="true"
-                :before-upload="beforeUpload"
-                :headers="headers"
-                @change="uploadHandle"
+                id="newFile1"
+                name="newFile1"
+                :multiple="false"
+                action="http://localhost:8080/v1/house/forSale/uploadHouseSaleFile" 
+                :headers="headersUpload"
+                @change="handleChange"
+                :remove="removeUploadFile"
                 >
                 <a-button> <a-icon type="upload" /> Click to Upload </a-button>
                 </a-upload>
@@ -177,7 +179,7 @@ import VueCookies from 'vue-cookies'
 import { copyReqObj, exportExcel,getAppointCookie } from '../../../../utils/common_util'
 import axios from 'axios'
 import {addHouseSource,findProvinceList,findCityList,findDistrictList,
-findStreetList,findHouseType,uploadHouseSaleFile } from './ReportHouseSourceService'
+findStreetList,findHouseType,uploadHouseSaleFile,delUploadHouseSaleFile } from './ReportHouseSourceService'
 export default {
     name: 'ReportHouseSourceModal',
   data () 
@@ -195,10 +197,10 @@ export default {
 
       },
       name:'',
-      headers: 
-      {
-        authorization: 'authorization-text',
+      headersUpload:{
+
       },
+      delInfoName:'',
     }
   },
   mounted () 
@@ -220,7 +222,7 @@ export default {
     },
     reset()
     {
-      console.log('还没做')
+      this.criteria = {}
     },
     handleCancel()
     {
@@ -229,7 +231,7 @@ export default {
     submitNewHouse()
     {
       let self=this
-      
+
       addHouseSource(self.criteria)
       .then(res => {
           this.loading = false
@@ -387,9 +389,33 @@ export default {
         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
       );
     },
-    uploadHandle(info)
+    handleChange(info) { // 上传文件
+        if (info.file.status !== 'uploading') {
+          console.log(info.file, info.fileList);
+        }
+        if (info.file.status === 'done') {
+          this.$message.success(`${info.file.name} 上传成功`);
+        } else if (info.file.status === 'error') {
+          this.$message.error(`${info.file.name} 上传失败.`);
+        }
+    },
+    removeUploadFile(info)
     {
-      
+      console.log('remove info...',info)
+      let infoName=info.name
+      let fileMsg={
+        fileName:infoName
+      }
+      delUploadHouseSaleFile(fileMsg).then(res =>{
+         if (res.status==0) 
+          {
+          self.$message.success('删除成功');
+          }else
+          {
+          self.$message.error('删除失败'); 
+          console.log('del uploadFile fail...',res)  
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
     },
 
   },

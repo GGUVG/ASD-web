@@ -21,6 +21,16 @@ export function uploadHouseSaleFile (Req) {
 }
 
 /*
+*删除上传文件
+*/
+export function delUploadHouseSaleFile (Req) {
+  return request(('http://localhost:8080/v1/house/forSale/delHouseSaleFile'), {
+    method: 'POST',
+    data: Req
+  })
+}
+
+/*
 *获取省级列表
 */
 export function findProvinceList () {
