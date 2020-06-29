@@ -7,38 +7,44 @@
 	  :visible=visible
   >
   <div>
-          <a-form layout='horizontal'>
+          <a-form-model layout='horizontal'
+          :model="criteria"
+          ref="ruleForm"
+          :rules="rules">
           <div>
           <a-row>
             <a-col :md="6" >
-              <a-form-item label="房源类型" :labelCol="{span: 5}" :wrapperCol="{span: 5, offset: 1}">
-              <a-select v-model="criteria.houseType">
+              <a-form-model-item label="房源类型" :labelCol="{span: 5}" 
+              :wrapperCol="{span: 5, offset: 1}" 
+              prop="houseType" 
+              has-feedback>
+              <a-select v-model="criteria.houseType" >
                 <a-select-option value="10">住宅</a-select-option>
                 <a-select-option value="20">公寓</a-select-option>
                 <a-select-option value="30">商铺</a-select-option>
                 <a-select-option value="40">写字楼</a-select-option>
                 </a-select> 
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
             <a-col :md="6" >
-              <a-form-item label="小区ID" :labelCol="{span: 5}" :wrapperCol="{span: 5, offset: 1}">
-              <a-input-number v-model="criteria.estateId"/>
-              </a-form-item>
+              <a-form-model-item has-feedback label="小区ID" :labelCol="{span: 5}" :wrapperCol="{span: 5, offset: 1}" prop="estateId">
+                <a-input-number v-model="criteria.estateId"/>
+              </a-form-model-item>
             </a-col>
             <a-col :md="6" >
-              <a-form-item label="门牌号" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-model-item label="门牌号" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}" prop="houseName" has-feedback>
               <a-input v-model="criteria.houseName"/>
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
             <a-col :md="6" >
-              <a-form-item label="建成时间" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-model-item label="建成时间" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}" prop="completeTime" has-feedback>
               <a-input v-model="criteria.completeTime"/>
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
           </a-row>
           <a-row>
             <a-col :md="13" :sm="24">
-              <a-form-item label="位置" :labelCol="{span: 1}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-model-item label="位置" :labelCol="{span: 1}" :wrapperCol="{span: 14, offset: 1}" prop="houseLocationProvince,houseLocationCity,houseLocationDistrict,houseLocationStreet" has-feedback>
                 <a-select 
                 id="houseLocationProvince"
                 style="width: 100px" 
@@ -95,70 +101,46 @@
                   {{s}}
                   </a-select-option>
                 </a-select>
-              </a-form-item>
+              </a-form-model-item>
               </a-col>
               <a-col :md="5" :sm="24">
-              <a-form-item label="价格/平" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-model-item label="价格/平" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}" prop="housePrice" has-feedback>
                 <a-input-number v-model="criteria.housePrice"/>
-              </a-form-item>
+              </a-form-model-item>
               </a-col>
               <a-col :md="5" :sm="24">
-              <a-form-item label="面积/平" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-model-item label="面积/平" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}" prop="houseSquare" has-feedback>
                 <a-input-number v-model="criteria.houseSquare"/>
-              </a-form-item>
+              </a-form-model-item>
               </a-col>
           </a-row>
           <a-row>
             <a-col :md="4" :sm="24">
-              <a-form-item label="客户ID" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-model-item label="客户ID" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}" prop="houseClientId" has-feedback>
               <a-input-number v-model="criteria.houseClientId"/>
-              </a-form-item>
+              </a-form-model-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="委托书材料1" :labelCol="{span: 6}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-item label="委托书材料1" :labelCol="{span: 6}" :wrapperCol="{span: 14, offset: 1}" has-feedback>
                 <a-upload
                 id="newFile1"
                 name="newFile1"
                 :multiple="false"
-                action="http://localhost:8080/v1/house/forSale/uploadHouseSaleFile" 
                 :headers="headersUpload"
                 @change="handleChange"
                 :remove="removeUploadFile"
-                :before-upload="beforeUpload"
-                >
+                :before-upload="beforeUpload">
                 <a-button> <a-icon type="upload" /> Click to Upload </a-button>
                 </a-upload>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="材料2" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-item label="未定义" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
                 <a-input/>
               </a-form-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="材料3" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
-                <a-input/>
-              </a-form-item>
-            </a-col>
-          </a-row>
-          <a-row>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="材料4" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
-                <a-input/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="材料5" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
-                <a-input/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="户型图" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
-                <a-input/>
-              </a-form-item>
-            </a-col>
-            <a-col :md="6" :sm="24">
-              <a-form-item label="室内图" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+              <a-form-item label="未定义" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
                 <a-input/>
               </a-form-item>
             </a-col>
@@ -166,17 +148,18 @@
           <a-row>
             <a-col :md="6">
               <a-button type="primary" @click="handleUpload()">Start Upload</a-button>
-              <a-button type="primary" @click="submitNewHouse()">提交</a-button>
+              <a-button type="primary" @click="submitNewHouse('ruleForm')">提交</a-button>
               <a-button @click="reset()">重置</a-button>
             </a-col>
           </a-row>
           </div>
-          </a-form>
+          </a-form-model>
           </div>
   </a-drawer>
 </template>
 <script>
 import moment from 'moment'
+import { FormModel } from 'ant-design-vue';
 import VueCookies from 'vue-cookies'
 import { copyReqObj, exportExcel,getAppointCookie } from '../../../../utils/common_util'
 import axios from 'axios'
@@ -196,13 +179,24 @@ export default {
       houseTypeList:[],
       criteria:
       {
-
+        houseType: '',
       },
-      name:'',
       headersUpload:{},
       delInfoName:'',
       uploadStatus:true,
-      fileList:[]
+      fileList:[],
+      rules: {
+        houseType: [{ required: true, message: 'houseType null', trigger: 'change' }],
+        estateId: [{ required: true, message: 'estateId null', trigger: 'change' }],
+        houseName: [{ required: true, message: 'houseName null', trigger: 'change' }],
+        completeTime: [{ required: true, message: 'completeTime null', trigger: 'change' }],
+        houseLocationProvince: [{ required: true, message: 'Province null', trigger: 'change' }],
+        houseLocationCity: [{ required: true, message: 'City null', trigger: 'change' }],
+        housePrice: [{ required: true, message: 'housePrice null', trigger: 'change' }],
+        houseSquare: [{ required: true, message: 'houseSquare null', trigger: 'change' }],
+        houseClientId: [{ required: true, message: 'houseClientId null', trigger: 'change' }],
+        
+      },
     }
   },
   mounted () 
@@ -227,12 +221,15 @@ export default {
     {
       this.visible=false
     },
-    submitNewHouse()
+    submitNewHouse(ruleForm)
     {
       let self=this
-
-      addHouseSource(self.criteria)
-      .then(res => {
+      self.$refs[ruleForm].validate(vaild =>{
+        if(vaild)
+        {
+          alert('submit!');
+          addHouseSource(self.criteria)
+          .then(res => {
           this.loading = false
           if (res.status==0) {
             console.log(res)
@@ -246,6 +243,12 @@ export default {
           this.$message.error('提交错误')
           console.log(`err is ${err}`)
           })
+        }else {
+       console.log('error submit!!');
+       return false;
+       }
+      })
+     
     },
     handleProvinceChange(value) 
     {
@@ -390,7 +393,6 @@ export default {
     },
     handleChange(info) { // 上传文件
         if (info.file.status !== 'uploading') {
-          console.log(info.file, info.fileList);
         }
         if (info.file.status === 'done') {
           this.$message.success(`${info.file.name} 上传成功`);
@@ -429,6 +431,9 @@ export default {
       fileList.forEach(file => {
         formData.append('newFile1', file);
         formData.append('houseLocationProvince', self.criteria.houseLocationProvince);
+        formData.append('houseLocationCity', self.criteria.houseLocationCity);
+        formData.append('houseLocationDistrict', self.criteria.houseLocationDistrict);
+        formData.append('houseLocationStreet', self.criteria.houseLocationStreet);
       });
       uploadHouseSaleFile(formData).then( (res) =>{
         if (res=='success') 

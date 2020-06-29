@@ -4,12 +4,12 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import $ from 'jquery';
 import axios from 'axios';
-import ant from 'ant-design-vue'
-import 'ant-design-vue/dist/antd.css'
-
-Vue.use(ant)
+import ant from 'ant-design-vue';
+import 'ant-design-vue/dist/antd.css';
+import { FormModel } from 'ant-design-vue';
+Vue.use(ant);
+Vue.use(FormModel);
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 //axios.defaults.headers.post['Content-Type'] = 'application/json;charset=UTF-8';
