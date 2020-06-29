@@ -44,7 +44,7 @@
           </a-row>
           <a-row>
             <a-col :md="13" :sm="24">
-              <a-form-model-item label="位置" :labelCol="{span: 1}" :wrapperCol="{span: 14, offset: 1}" prop="houseLocationProvince,houseLocationCity,houseLocationDistrict,houseLocationStreet" has-feedback>
+              <a-form-model-item ref="location" :autoLink="false" label="位置" :labelCol="{span: 1}" :wrapperCol="{span: 14, offset: 1}" prop="houseLocationStreet" has-feedback>
                 <a-select 
                 id="houseLocationProvince"
                 style="width: 100px" 
@@ -60,6 +60,7 @@
                   </a-select-option>
                 </a-select>
                 <a-select
+                ref="houseLocationCity"
                 id="houseLocationCity"
                 style="width: 100px" 
                 showSearch
@@ -92,9 +93,10 @@
                 style="width: 100px"
                 showSearch
                 ptionFilterProp="children"
-                @change="handleStreetChange" 
+                @change="handleStreetChange"
                 @search="handleStreetSearch"
                 @focus="handleStreetFocus"
+                @blur="()=>{$refs.location.onFieldBlur()}"
                 :filterOption="filterOption"
                 v-model="criteria.houseLocationStreet">
                   <a-select-option v-for="s in streetData" :key="s" :value="s">
@@ -121,7 +123,7 @@
               </a-form-model-item>
             </a-col>
             <a-col :md="6" :sm="24">
-              <a-form-item label="委托书材料1" :labelCol="{span: 6}" :wrapperCol="{span: 14, offset: 1}" has-feedback>
+              <a-form-item label="委托书材料" :labelCol="{span: 6}" :wrapperCol="{span: 14, offset: 1}" prop="houseClientId" has-feedback>
                 <a-upload
                 id="newFile1"
                 name="newFile1"
@@ -155,6 +157,21 @@
           </div>
           </a-form-model>
           </div>
+        <a-drawer
+        title='小区ID'
+	      width="30%"
+        @close="()=>handleCancelSecond()"
+        :destroyOnClose="true"
+	      :visible=visible>
+        <a-select
+        @change="handleEstateIdChange"
+        @search="handleEstateIdSearch"
+        @focus="handleEstateIdFocus"
+        :filterOption="filterOption">
+          <a-select-option>1</a-select-option>
+          <a-select-option>2</a-select-option>
+        </a-select>
+        </a-drawer>
   </a-drawer>
 </template>
 <script>
@@ -190,8 +207,7 @@ export default {
         estateId: [{ required: true, message: 'estateId null', trigger: 'change' }],
         houseName: [{ required: true, message: 'houseName null', trigger: 'change' }],
         completeTime: [{ required: true, message: 'completeTime null', trigger: 'change' }],
-        houseLocationProvince: [{ required: true, message: 'Province null', trigger: 'change' }],
-        houseLocationCity: [{ required: true, message: 'City null', trigger: 'change' }],
+        houseLocationStreet: [{ required: true, message: 'Location null', trigger: 'blur' }],
         housePrice: [{ required: true, message: 'housePrice null', trigger: 'change' }],
         houseSquare: [{ required: true, message: 'houseSquare null', trigger: 'change' }],
         houseClientId: [{ required: true, message: 'houseClientId null', trigger: 'change' }],
@@ -293,6 +309,18 @@ export default {
     handleStreetFocus()
     {
       this.getStreet()
+    },
+    handleEstateIdChange()
+    {
+      console.log('handleEstateIdChange')
+    },
+    handleEstateIdSearch()
+    {
+      console.log('handleEstateIdSearch')
+    },
+    handleEstateIdFocus()
+    {
+      console.log('handleEstateIdFocus')
     },
     handleHouseTypeChange(value) 
     {
@@ -434,6 +462,8 @@ export default {
         formData.append('houseLocationCity', self.criteria.houseLocationCity);
         formData.append('houseLocationDistrict', self.criteria.houseLocationDistrict);
         formData.append('houseLocationStreet', self.criteria.houseLocationStreet);
+        formData.append('staffId',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffId);
+        formData.append('staffUserName',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffUsername);
       });
       uploadHouseSaleFile(formData).then( (res) =>{
         if (res=='success') 
