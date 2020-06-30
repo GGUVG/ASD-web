@@ -113,10 +113,11 @@
         />
       </a-layout-header>
       <a-layout-content style="margin: 0 16px">
-        
+      <slot >
         <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
           <img src="../assets/main.jpg"/>
         </div>
+      </slot>
       </a-layout-content>
       <a-layout-footer style="text-align: center">
         Ant Design ©2018 Created by Ant UED

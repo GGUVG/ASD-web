@@ -96,3 +96,18 @@ export function findHouseType () {
     }
   })
 }
+
+/*
+*获取小区列表
+*/
+export function findEstateByName (req) {
+  return request(('http://localhost:8080/v1/estate/findEstateList'), 
+  {
+    method: 'POST',
+    data: req,
+    headers:{
+      'Accept': 'application/json',
+      'Content-Type': 'application/json; charset=utf-8'
+    }
+  })
+}

@@ -27,8 +27,10 @@
               </a-form-model-item>
             </a-col>
             <a-col :md="6" >
-              <a-form-model-item has-feedback label="小区ID" :labelCol="{span: 5}" :wrapperCol="{span: 5, offset: 1}" prop="estateId">
-                <a-input-number v-model="criteria.estateId"/>
+              <a-form-model-item has-feedback ref="estateId" label="小区ID" :labelCol="{span: 5}" :wrapperCol="{span: 5, offset: 1}" prop="estateId">
+                <a-input-number v-model="criteria.estateId" 
+                @focus="onFocusEstateId" 
+                @change="onChangeEstateId"/>
               </a-form-model-item>
             </a-col>
             <a-col :md="6" >
@@ -44,7 +46,7 @@
           </a-row>
           <a-row>
             <a-col :md="13" :sm="24">
-              <a-form-model-item ref="location" :autoLink="false" label="位置" :labelCol="{span: 1}" :wrapperCol="{span: 14, offset: 1}" prop="houseLocationStreet" has-feedback>
+              <a-form-model-item ref="location" :autoLink="false" label="位置" :labelCol="{span: 2}" :wrapperCol="{span: 14, offset: 1}" prop="houseLocationStreet" >
                 <a-select 
                 id="houseLocationProvince"
                 style="width: 100px" 
@@ -162,14 +164,21 @@
 	      width="30%"
         @close="()=>handleCancelSecond()"
         :destroyOnClose="true"
-	      :visible=visible>
+        :closable="true"
+	      :visible="secondVisible">
         <a-select
+        style="width: 300px"
+        showSearch
+        ptionFilterProp="children"
         @change="handleEstateIdChange"
         @search="handleEstateIdSearch"
         @focus="handleEstateIdFocus"
-        :filterOption="filterOption">
-          <a-select-option>1</a-select-option>
-          <a-select-option>2</a-select-option>
+        :filterOption="filterOption"
+        v-model="criteria.estateId">
+          <a-select-option v-for="e in estateList" :key="e.estateId" :value="e.estateId">
+            {{e.estateId + "-" + e.estateName + e.estateProvince + 
+            e.estateCity + e.estateDistrict + e.estateStreet}}
+          </a-select-option>
         </a-select>
         </a-drawer>
   </a-drawer>
@@ -181,19 +190,22 @@ import VueCookies from 'vue-cookies'
 import { copyReqObj, exportExcel,getAppointCookie } from '../../../../utils/common_util'
 import axios from 'axios'
 import {addHouseSource,findProvinceList,findCityList,findDistrictList,
-findStreetList,findHouseType,uploadHouseSaleFile,delUploadHouseSaleFile } from './ReportHouseSourceService'
+findStreetList,findHouseType,uploadHouseSaleFile,delUploadHouseSaleFile,
+findEstateByName } from './ReportHouseSourceService'
 export default {
     name: 'ReportHouseSourceModal',
   data () 
   {
     return {
       visible: false,
+      secondVisible:false,
       loading: false,
       provinceData:[],
       cityData:[],
       districtData:[],
       streetData:[],
       houseTypeList:[],
+      estateList:[],
       criteria:
       {
         houseType: '',
@@ -225,6 +237,9 @@ export default {
   },
   methods: 
   {
+    change123(e){
+      console.log('aaaaa',e)
+    },
     showModal()
     {
       this.visible = true
@@ -243,13 +258,14 @@ export default {
       self.$refs[ruleForm].validate(vaild =>{
         if(vaild)
         {
-          alert('submit!');
+          alert('提交校验通过');
           addHouseSource(self.criteria)
           .then(res => {
           this.loading = false
           if (res.status==0) {
             console.log(res)
             this.$message.success('提交成功')
+            this.handleCancel()
           } else {
             this.$message.error('提交失败')
           }
@@ -310,17 +326,26 @@ export default {
     {
       this.getStreet()
     },
-    handleEstateIdChange()
+    onChangeEstateId(value)
     {
-      console.log('handleEstateIdChange')
+      this.criteria.estateId=value
+      this.$refs.estateId.onFieldChange();
     },
-    handleEstateIdSearch()
+    handleEstateIdChange(value)
     {
-      console.log('handleEstateIdSearch')
+      this.onChangeEstateId(value)
+    },
+    handleEstateIdSearch(value)
+    {
+      let self=this
+      let estateReq={
+        estateName:value
+      }
+      self.getEstateList(estateReq)
     },
     handleEstateIdFocus()
     {
-      console.log('handleEstateIdFocus')
+
     },
     handleHouseTypeChange(value) 
     {
@@ -329,6 +354,10 @@ export default {
     handleHouseTypeSearch()
     {
       this.getHouseType()
+    },
+    onFocusEstateId()
+    {
+      this.secondVisible=true
     },
     getProvince()
     {
@@ -413,6 +442,21 @@ export default {
           }).catch(err => {console.log(`err is ${err}`)})
 
     },
+    getEstateList(req)
+    {
+      let self=this
+      findEstateByName(req).then(res =>{
+        if (res.status==0) 
+          {
+          self.estateList=res.data
+          }else
+          { 
+          self.estateList=[]
+          self.$message.error('获取小区列表失败'); 
+          console.log('get Estate List fail...',res)  
+          }
+      }).catch(err => {console.log(`err is ${err}`)})
+    },
     filterOption(input, option) 
     {
       return (
@@ -477,7 +521,10 @@ export default {
           }
       }).catch(err => {console.log(`err is ${err}`)})
     },
-
+    handleCancelSecond()
+    {
+      this.secondVisible=false
+    }
   },
 
 }
