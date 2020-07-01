@@ -3,9 +3,8 @@
     title='报备新房源'
 	  width="80%"
     @close="()=>handleCancel()"
-    :destroyOnClose="true"
-	  :visible=visible
-  >
+    destroyOnClose
+	  :visible=visible>
   <div>
           <a-form-model layout='horizontal'
           :model="criteria"
@@ -163,7 +162,7 @@
         title='小区ID'
 	      width="30%"
         @close="()=>handleCancelSecond()"
-        :destroyOnClose="true"
+        destroyOnClose
         :closable="true"
 	      :visible="secondVisible">
         <a-select
@@ -250,6 +249,7 @@ export default {
     },
     handleCancel()
     {
+      this.reset()
       this.visible=false
     },
     submitNewHouse(ruleForm)
@@ -259,16 +259,22 @@ export default {
         if(vaild)
         {
           alert('提交校验通过');
+          if(self.fileList.length==0)
+          {
+            alert('未上传材料')
+            return
+          }
           addHouseSource(self.criteria)
           .then(res => {
-          this.loading = false
-          if (res.status==0) {
-            console.log(res)
-            this.$message.success('提交成功')
-            this.handleCancel()
-          } else {
-            this.$message.error('提交失败')
-          }
+            this.loading = false
+            if (res.status==0) {
+              console.log(res)
+              this.handleUpload()
+              this.$message.success('提交成功')
+              this.handleCancel()
+            } else {
+              this.$message.error('提交失败')
+            }
           })
           .catch(err => {
           this.loading = false
@@ -474,21 +480,12 @@ export default {
     },
     removeUploadFile(info)
     {
+      let self=this
       console.log('remove info...',info)
-      let infoName=info.name
-      let fileMsg={
-        fileName:infoName
-      }
-      delUploadHouseSaleFile(fileMsg).then(res =>{
-         if (res.status==0) 
-          {
-          self.$message.success('删除成功');
-          }else
-          {
-          self.$message.error('删除失败'); 
-          console.log('del uploadFile fail...',res)  
-          }
-          }).catch(err => {console.log(`err is ${err}`)})
+      let index = self.fileList.indexOf(info);
+      let newFileList = self.fileList.slice();
+      newFileList.splice(index, 1);
+      self.fileList = newFileList;
     },
     beforeUpload(file) 
     {
@@ -500,8 +497,18 @@ export default {
       let self=this
       let fileList = self.fileList;
       let formData = new FormData();
+      /*
+      console.log('estateId',self.criteria.estateId)
+      console.log('houseLocationProvince',self.criteria.houseLocationProvince)
+      console.log('houseLocationCity',self.criteria.houseLocationCity)
+      console.log('houseLocationDistrict',self.criteria.houseLocationDistrict)
+      console.log('houseLocationStreet',self.criteria.houseLocationStreet)
+      console.log('fileList',fileList)
+      */
       fileList.forEach(file => {
         formData.append('newFile1', file);
+        formData.append('houseEstateId', self.criteria.estateId);
+        formData.append('houseName', self.criteria.houseName);
         formData.append('houseLocationProvince', self.criteria.houseLocationProvince);
         formData.append('houseLocationCity', self.criteria.houseLocationCity);
         formData.append('houseLocationDistrict', self.criteria.houseLocationDistrict);
