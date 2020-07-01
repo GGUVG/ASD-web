@@ -150,7 +150,7 @@
           </a-row>
           <a-row>
             <a-col :md="6">
-              <a-button type="primary" @click="handleUpload()">Start Upload</a-button>
+              <!--<a-button type="primary" @click="handleUploadMaterial()">Start Upload</a-button>-->
               <a-button type="primary" @click="submitNewHouse('ruleForm')">提交</a-button>
               <a-button @click="reset()">重置</a-button>
             </a-col>
@@ -269,7 +269,7 @@ export default {
             this.loading = false
             if (res.status==0) {
               console.log(res)
-              this.handleUpload()
+              this.handleUploadMaterial()
               this.$message.success('提交成功')
               this.handleCancel()
             } else {
@@ -492,40 +492,46 @@ export default {
       this.fileList = [...this.fileList, file];
       return false;
     },
-    handleUpload()
+    handleUploadMaterial()
     {
       let self=this
       let fileList = self.fileList;
       let formData = new FormData();
-      /*
-      console.log('estateId',self.criteria.estateId)
-      console.log('houseLocationProvince',self.criteria.houseLocationProvince)
-      console.log('houseLocationCity',self.criteria.houseLocationCity)
-      console.log('houseLocationDistrict',self.criteria.houseLocationDistrict)
-      console.log('houseLocationStreet',self.criteria.houseLocationStreet)
-      console.log('fileList',fileList)
-      */
-      fileList.forEach(file => {
+
+      for(let file of fileList){
         formData.append('newFile1', file);
         formData.append('houseEstateId', self.criteria.estateId);
         formData.append('houseName', self.criteria.houseName);
+        formData.append('materialTypeTxt', '委托书材料');
         formData.append('houseLocationProvince', self.criteria.houseLocationProvince);
         formData.append('houseLocationCity', self.criteria.houseLocationCity);
         formData.append('houseLocationDistrict', self.criteria.houseLocationDistrict);
         formData.append('houseLocationStreet', self.criteria.houseLocationStreet);
         formData.append('staffId',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffId);
         formData.append('staffUserName',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffUsername);
-      });
+      }
+      // fileList.forEach(file => {
+      //   formData.append('newFile1', file);
+      //   formData.append('houseEstateId', self.criteria.estateId);
+      //   formData.append('houseName', self.criteria.houseName);
+      //   formData.append('materialTypeTxt', '委托书材料');
+      //   formData.append('houseLocationProvince', self.criteria.houseLocationProvince);
+      //   formData.append('houseLocationCity', self.criteria.houseLocationCity);
+      //   formData.append('houseLocationDistrict', self.criteria.houseLocationDistrict);
+      //   formData.append('houseLocationStreet', self.criteria.houseLocationStreet);
+      //   formData.append('staffId',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffId);
+      //   formData.append('staffUserName',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffUsername);
+      // });
       uploadHouseSaleFile(formData).then( (res) =>{
-        if (res=='success') 
-          {
-          self.fileList = [];
+        if (res=='success')
+        {
           self.$message.success('上传成功');
-          }else
-          {
+        }else
+        {
           self.$message.error('上传失败'); 
           console.log('uploadFile fail...',res)  
-          }
+        }
+          self.fileList = [];
       }).catch(err => {console.log(`err is ${err}`)})
     },
     handleCancelSecond()
