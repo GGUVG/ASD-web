@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title='报备新房源'
+    title='报备新租源'
 	  width="80%"
     @close="()=>handleCancel()"
     destroyOnClose
@@ -187,12 +187,10 @@ import moment from 'moment'
 import { FormModel } from 'ant-design-vue';
 import VueCookies from 'vue-cookies'
 import { copyReqObj, exportExcel,getAppointCookie } from '../../../../utils/common_util'
-import axios from 'axios'
 import {addHouseSource,findProvinceList,findCityList,findDistrictList,
-findStreetList,findHouseType,uploadHouseSaleFile,delUploadHouseSaleFile,
-findEstateByName } from './ReportHouseSourceService'
+findStreetList,findHouseType,uploadHouseRentFile,findEstateByName } from './ReportHouseRentSourceService'
 export default {
-    name: 'ReportHouseSourceModal',
+    name: 'ReportHouseRentSourceModal',
   data () 
   {
     return {
@@ -208,6 +206,7 @@ export default {
       criteria:
       {
         houseType: '',
+        mandate:'',
       },
       headersUpload:{},
       delInfoName:'',
@@ -236,9 +235,6 @@ export default {
   },
   methods: 
   {
-    change123(e){
-      console.log('aaaaa',e)
-    },
     showModal()
     {
       this.visible = true
@@ -258,7 +254,7 @@ export default {
       self.$refs[ruleForm].validate(vaild =>{
         if(vaild)
         {
-          alert('提交校验通过');
+          self.$message.success('提交校验通过');
           if(self.fileList.length==0)
           {
             alert('未上传材料')
@@ -480,16 +476,19 @@ export default {
     },
     removeUploadFile(info)
     {
-      let self=this
-      console.log('remove info...',info)
-      let index = self.fileList.indexOf(info);
-      let newFileList = self.fileList.slice();
-      newFileList.splice(index, 1);
-      self.fileList = newFileList;
+      let index = this.fileList.indexOf(info.originFileObj)
+      let newFileList = this.fileList.slice()
+      newFileList.splice(index, 1)
+      this.fileList = newFileList
     },
     beforeUpload(file) 
     {
+      let newFileNameSuffix=this.matchType(file.name)
+      let needIdTxt=JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffId
+      let newFileName=JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffUsername
+      let newFileNameTxt=needIdTxt+newFileName+"."+newFileNameSuffix
       this.fileList = [...this.fileList, file];
+      this.criteria.mandate = newFileNameTxt
       return false;
     },
     handleUploadMaterial()
@@ -510,19 +509,7 @@ export default {
         formData.append('staffId',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffId);
         formData.append('staffUserName',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffUsername);
       }
-      // fileList.forEach(file => {
-      //   formData.append('newFile1', file);
-      //   formData.append('houseEstateId', self.criteria.estateId);
-      //   formData.append('houseName', self.criteria.houseName);
-      //   formData.append('materialTypeTxt', '委托书材料');
-      //   formData.append('houseLocationProvince', self.criteria.houseLocationProvince);
-      //   formData.append('houseLocationCity', self.criteria.houseLocationCity);
-      //   formData.append('houseLocationDistrict', self.criteria.houseLocationDistrict);
-      //   formData.append('houseLocationStreet', self.criteria.houseLocationStreet);
-      //   formData.append('staffId',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffId);
-      //   formData.append('staffUserName',JSON.parse(decodeURIComponent(getAppointCookie('backStaffCookie'))).staffUsername);
-      // });
-      uploadHouseSaleFile(formData).then( (res) =>{
+      uploadHouseRentFile(formData).then( (res) =>{
         if (res=='success')
         {
           self.$message.success('上传成功');
@@ -537,6 +524,13 @@ export default {
     handleCancelSecond()
     {
       this.secondVisible=false
+    },
+    matchType(info) 
+    {        
+      // 后缀获取
+      let a = info.split('').reverse().join('');
+      let b = a.substring(0,a.search(/\./)).split('').reverse().join('');
+      return b
     }
   },
 

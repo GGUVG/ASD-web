@@ -15,9 +15,10 @@
               <CheckHouseMsgSaleModal ref="CheckHouseMsgSaleModal"></CheckHouseMsgSaleModal>
               <a-menu-item key="housingRentHandle" @click="openHousingRentModal">租赁房源</a-menu-item>
               <CheckHouseMsgRentModal ref="CheckHouseMsgRentModal"></CheckHouseMsgRentModal>
-              <a-menu-item key="housingSaleReport" @click="openReportHouseSourceModal">新买卖房源报备</a-menu-item>
-              <ReportHouseSourceModal ref="ReportHouseSourceModal"></ReportHouseSourceModal>
-              <a-menu-item key="housingRentReport">新租赁房源报备</a-menu-item>
+              <a-menu-item key="housingSaleReport" @click="openReportHouseSaleSourceModal()">新买卖房源报备</a-menu-item>
+              <ReportHouseSaleSourceModal ref="ReportHouseSaleSourceModal"></ReportHouseSaleSourceModal>
+              <a-menu-item key="housingRentReport" @click="openReportHouseRentSourceModal()">新租赁房源报备</a-menu-item>
+              <ReportHouseRentSourceModal ref="ReportHouseRentSourceModal"></ReportHouseRentSourceModal>
           </a-sub-menu>
           <a-sub-menu key="clientHanle"><span slot="title"><a-icon type="contacts"/><span>客户管理</span></span>
               <a-menu-item key="clientDigital"><a-icon type="solution"/>电子客簿</a-menu-item>
@@ -131,7 +132,8 @@ import axios from 'axios';
 axios.defaults.withCredentials = true;// 允许跨域携带cookie
 import CheckHouseMsgSaleModal from './subIntegratedBusiness/housingHandle/houseSale/CheckHouesMsgSaleModal';
 import CheckHouseMsgRentModal from './subIntegratedBusiness/housingHandle/houseRent/CheckHouesMsgRentModal';
-import ReportHouseSourceModal from './subIntegratedBusiness/housingHandle/reportHouseSource/ReportHouseSourceModal'
+import ReportHouseSaleSourceModal from './subIntegratedBusiness/housingHandle/reportHouseSource/ReportHouseSaleSourceModal'
+import ReportHouseRentSourceModal from './subIntegratedBusiness/housingHandle/reportHouseSource/ReportHouseRentSourceModal'
 import StaffLogin from './StaffLogin.vue'
 import Cookies from 'js-cookie'
 import VueCookies from 'vue-cookies'
@@ -140,7 +142,7 @@ import { getCookie } from '../utils/utils'
 export default {
   name: 'Hello1',
   components: {
-    StaffLogin,CheckHouseMsgSaleModal,CheckHouseMsgRentModal,ReportHouseSourceModal
+    StaffLogin,CheckHouseMsgSaleModal,CheckHouseMsgRentModal,ReportHouseSaleSourceModal,ReportHouseRentSourceModal
   },
   data() {
     return {
@@ -216,9 +218,13 @@ export default {
     {
       this.$refs.CheckHouseMsgRentModal.showModal()
     },
-    openReportHouseSourceModal()
+    openReportHouseSaleSourceModal()
     {
-      this.$refs.ReportHouseSourceModal.showModal()
+      this.$refs.ReportHouseSaleSourceModal.showModal()
+    },
+    openReportHouseRentSourceModal()
+    {
+      this.$refs.ReportHouseRentSourceModal.showModal()
     },
     checkCookie()
     {
