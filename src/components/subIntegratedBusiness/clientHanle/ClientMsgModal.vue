@@ -21,7 +21,7 @@
               </a-form-item>
             </a-col>
             <a-col :md="6" >
-              <a-form-item label="客户性别" :labelCol="{span: 4}" :wrapperCol="{span: 5, offset: 1}">
+              <a-form-item label="客户性别" :labelCol="{span: 5}" :wrapperCol="{span: 5, offset: 1}">
               <a-select v-model="criteria.clientSex">
                 <a-select-option value='男'>男</a-select-option>
                 <a-select-option value='女'>女</a-select-option>
@@ -102,6 +102,87 @@
               </a-col>
           </a-row>
           <a-row>
+            <a-col :md="6" >
+              <a-form-item label="面积/平" :labelCol="{span: 2}" :wrapperCol="{span: 14, offset: 1}">
+              <a-input-number v-model="criteria.startClientExpectSquare"/>
+              <a-input-number v-model="criteria.endClientExpectSquare"/>
+              </a-form-item>
+            </a-col>
+            <a-col :md="6" >
+              <a-form-item label="价格/月" :labelCol="{span: 2}" :wrapperCol="{span: 14, offset: 1}">
+              <a-input-number v-model="criteria.startClientExpectPrice"/>
+              <a-input-number v-model="criteria.endClientExpectPrice"/>
+              </a-form-item>
+            </a-col>
+          </a-row>
+          <a-row v-if="this.clientType==30 || this.clientType==40">
+            <a-col :md="16" :sm="24">
+              <a-form-item label="期待位置" :labelCol="{span: 2}" :wrapperCol="{span: 14, offset: 1}">
+                <a-select 
+                id="houseLocationProvince"
+                style="width: 120px" 
+                showSearch
+                allowClear:true
+                ptionFilterProp="children"
+                @change="handleProvinceChange" 
+                @search="handleProvinceSearch"
+                :filterOption="filterOption"
+                v-model="criteria.clientExpectPlaceProvince">
+                  <a-select-option v-for="p in provinceData" :key="p" :value="p">
+                  {{p}}
+                  </a-select-option>
+                </a-select>
+                <a-select
+                id="houseLocationCity"
+                style="width: 120px" 
+                showSearch
+                ptionFilterProp="children"
+                @change="handleCityChange" 
+                @search="handleCitySearch"
+                @focus="handleCityFocus"
+                :filterOption="filterOption"
+                v-model="criteria.clientExpectPlaceCity">
+                  <a-select-option v-for="c in cityData" :key="c" :value="c">
+                  {{c}}
+                  </a-select-option>
+                </a-select>
+                <a-select
+                id="houseLocationDistrict" 
+                style="width: 120px"
+                showSearch
+                ptionFilterProp="children"
+                @change="handleDistrictChange" 
+                @search="handleDistrictSearch"
+                @focus="handleDistrictFocus"
+                :filterOption="filterOption"
+                v-model="criteria.clientExpectPlaceDistrict">
+                  <a-select-option v-for="d in districtData" :key="d" :value="d">
+                  {{d}}
+                  </a-select-option>
+                </a-select>
+                <a-select
+                id="houseLocationStreet" 
+                style="width: 120px"
+                showSearch
+                ptionFilterProp="children"
+                @change="handleStreetChange" 
+                @search="handleStreetSearch"
+                @focus="handleStreetFocus"
+                :filterOption="filterOption"
+                v-model="criteria.clientExpectPlaceStreet">
+                  <a-select-option v-for="s in streetData" :key="s" :value="s">
+                  {{s}}
+                  </a-select-option>
+                </a-select>
+              </a-form-item>
+              </a-col>
+              <a-col :md="6" :sm="24">
+              <a-form-item label="" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
+
+              </a-form-item>
+              </a-col>
+          </a-row>
+          <a-row>
             <a-col :md="6" :sm="24">
               <a-form-item label="客户类型" :labelCol="{span: 5}" :wrapperCol="{span: 14, offset: 1}">
               <a-select  v-model="clientType">
@@ -156,8 +237,9 @@
 import moment from 'moment'
 import VueCookies from 'vue-cookies'
 import { copyReqObj, exportExcel,getAppointCookie } from '../../../utils/common_util'
-import {findBySearchClientSale,findBySearchClientRent,exportBySearchClientSale,exportBySearchClientRent,
-findProvinceList,findCityList,findDistrictList,findStreetList } from './ClientMsgService'
+import {findBySearchClientSale,findBySearchClientRent,findBySearchClientWantBuy,
+findBySearchClientWantRent,exportBySearchClientSale,exportBySearchClientRent,exportBySearchClientWantBuy,
+exportBySearchClientWantRent,findProvinceList,findCityList,findDistrictList,findStreetList, } from './ClientMsgService'
 const dataSource = []
 const columns = [
 
@@ -207,6 +289,36 @@ const columns = [
     title: '客户备注',
     dataIndex: 'clientRemark',
     key: 'clientRemark'
+  },
+  {
+    title: '期待省',
+    dataIndex: 'clientExpectPlaceProvince',
+    key: 'clientExpectPlaceProvince'
+  },
+  {
+    title: '期待市',
+    dataIndex: 'clientExpectPlaceCity',
+    key: 'clientExpectPlaceCity'
+  },
+  {
+    title: '期待区',
+    dataIndex: 'clientExpectPlaceDistrict',
+    key: 'clientExpectPlaceDistrict'
+  },
+  {
+    title: '期待街',
+    dataIndex: 'clientExpectPlaceStreet',
+    key: 'clientExpectPlaceStreet'
+  },
+  {
+    title: '期待租价',
+    dataIndex: 'clientExpectPrice',
+    key: 'clientExpectPrice'
+  },
+  {
+    title: '期待面积',
+    dataIndex: 'clientExpectSquare',
+    key: 'clientExpectSquare'
   },
   {
     title: '客户所属员工ID',
@@ -331,9 +443,47 @@ export default {
           self.$message.error('error')
           console.log(`err is ${err}`)
           })
-    }else
+    }else if(self.clientType==30)
     {
-      console.log('clientType null')
+      findBySearchClientWantBuy(pageReq).then(res => {
+      self.loading = false
+      if (res.data) {
+        const ret = res.data
+        self.dataSource = ret.rows
+        const pag = ret.pagination
+        self.pagination = { total: pag.totalSize, pageSize: pag.pageSize, current: pag.pageNo }
+        } else {
+          self.$message.error('获取数据错误')
+          }
+          })
+          .catch(err => {
+          self.loading = false
+          self.$message.error('error')
+          console.log(`err is ${err}`)
+          })
+    }else if(self.clientType==40)
+    {
+      findBySearchClientWantRent(pageReq).then(res => {
+      self.loading = false
+      if (res.data) {
+        const ret = res.data
+        self.dataSource = ret.rows
+        const pag = ret.pagination
+        self.pagination = { total: pag.totalSize, pageSize: pag.pageSize, current: pag.pageNo }
+        } else {
+          self.$message.error('获取数据错误')
+          }
+          })
+          .catch(err => {
+          self.loading = false
+          self.$message.error('error')
+          console.log(`err is ${err}`)
+          })
+    }
+    else
+    {
+      self.$message.error('用户类型为空')
+      console.log(`err is ${err}`)
     }
         
     },
@@ -412,6 +562,36 @@ export default {
       }else if(self.clientType==20)
       {
         exportBySearchClientRent(req).then(res => {
+          self.loading = false
+          if (res.data) {
+          let headers1 = res.headers.filename
+          exportExcel(res.data, headers1)
+          self.loading = false
+          }
+          })
+          .catch(err => {
+          self.loading = false
+          self.$message.error('导出失败')
+          console.log(`err is ${err}`)
+          })
+      }else if(self.clientType==30)
+      {
+        exportBySearchClientWantBuy(req).then(res => {
+          self.loading = false
+          if (res.data) {
+          let headers1 = res.headers.filename
+          exportExcel(res.data, headers1)
+          self.loading = false
+          }
+          })
+          .catch(err => {
+          self.loading = false
+          self.$message.error('导出失败')
+          console.log(`err is ${err}`)
+          })
+      }else if(self.clientType==40)
+      {
+        exportBySearchClientWantRent(req).then(res => {
           self.loading = false
           if (res.data) {
           let headers1 = res.headers.filename

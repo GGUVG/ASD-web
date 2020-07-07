@@ -21,6 +21,26 @@ export function findBySearchClientRent (pageReq) {
 }
 
 /*
+*根据条件分页意向购房客户查询
+*/
+export function findBySearchClientWantBuy (pageReq) {
+  return request(('http://localhost:8080/v1/client/findPageClientWantBuy'), {
+    method: 'POST',
+    data: pageReq
+  })
+}
+
+/*
+*根据条件分页意向购房客户查询
+*/
+export function findBySearchClientWantRent (pageReq) {
+  return request(('http://localhost:8080/v1/client/findPageClientWantRent'), {
+    method: 'POST',
+    data: pageReq
+  })
+}
+
+/*
 *根据出售客户条件查询结果导出excel
 */
 export function exportBySearchClientSale (pageReq) {
@@ -36,6 +56,28 @@ export function exportBySearchClientSale (pageReq) {
 */
 export function exportBySearchClientRent (pageReq) {
   return exportRequest(('http://localhost:8080/v1/client/exportFindCLientRent'), {
+    method: 'POST',
+    data: pageReq,
+    responseType: 'arraybuffer'
+  })
+}
+
+/*
+*根据意向购房客户条件查询结果导出excel
+*/
+export function exportBySearchClientWantBuy (pageReq) {
+  return exportRequest(('http://localhost:8080/v1/client/exportFindCLientWantBuy'), {
+    method: 'POST',
+    data: pageReq,
+    responseType: 'arraybuffer'
+  })
+}
+
+/*
+*根据意向租房客户条件查询结果导出excel
+*/
+export function exportBySearchClientWantRent (pageReq) {
+  return exportRequest(('http://localhost:8080/v1/client/exportFindCLientWantRent'), {
     method: 'POST',
     data: pageReq,
     responseType: 'arraybuffer'
