@@ -21,8 +21,9 @@
               <ReportHouseRentSourceModal ref="ReportHouseRentSourceModal"></ReportHouseRentSourceModal>
           </a-sub-menu>
           <a-sub-menu key="clientHanle"><span slot="title"><a-icon type="contacts"/><span>客户管理</span></span>
-              <a-menu-item key="clientDigital"><a-icon type="solution"/>电子客簿</a-menu-item>
-              <a-menu-item key="clientExploit"><a-icon type="eye"/>淘客</a-menu-item>
+              <a-menu-item key="clientDigital" @click="openClientMsgModal()">电子客簿</a-menu-item>
+              <CLientMsgModal ref="CLientMsgModal"></CLientMsgModal>
+              <a-menu-item key="clientExploit">淘客</a-menu-item>
           </a-sub-menu>
           <a-sub-menu key="keyHandle"><a-icon type="keyHandle"/><span slot="title"><a-icon type="key"/><span>钥匙管理</span></span>
               <a-menu-item key="keyRegister">钥匙登记</a-menu-item>
@@ -134,6 +135,7 @@ import CheckHouseMsgSaleModal from './subIntegratedBusiness/housingHandle/houseS
 import CheckHouseMsgRentModal from './subIntegratedBusiness/housingHandle/houseRent/CheckHouesMsgRentModal';
 import ReportHouseSaleSourceModal from './subIntegratedBusiness/housingHandle/reportHouseSource/ReportHouseSaleSourceModal'
 import ReportHouseRentSourceModal from './subIntegratedBusiness/housingHandle/reportHouseSource/ReportHouseRentSourceModal'
+import CLientMsgModal from './subIntegratedBusiness/clientHanle/ClientMsgModal'
 import StaffLogin from './StaffLogin.vue'
 import Cookies from 'js-cookie'
 import VueCookies from 'vue-cookies'
@@ -142,7 +144,8 @@ import { getCookie } from '../utils/utils'
 export default {
   name: 'Hello1',
   components: {
-    StaffLogin,CheckHouseMsgSaleModal,CheckHouseMsgRentModal,ReportHouseSaleSourceModal,ReportHouseRentSourceModal
+    StaffLogin,CheckHouseMsgSaleModal,CheckHouseMsgRentModal,ReportHouseSaleSourceModal,
+    ReportHouseRentSourceModal,CLientMsgModal
   },
   data() {
     return {
@@ -225,6 +228,10 @@ export default {
     openReportHouseRentSourceModal()
     {
       this.$refs.ReportHouseRentSourceModal.showModal()
+    },
+    openClientMsgModal()
+    {
+      this.$refs.CLientMsgModal.showModal()
     },
     checkCookie()
     {
