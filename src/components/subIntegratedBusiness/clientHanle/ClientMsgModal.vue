@@ -6,8 +6,9 @@
     :destroyOnClose="true"
 	  :visible=visible
   >
+  <ClientEditModal ref="ClientEditModal" :updateOkCallback="updateOkCallback"></ClientEditModal>
   <div>
-          <a-form layout="horizontal">
+          <a-form layout="horizontal" :form="form">
           <div>
           <a-row>
             <a-col :md="6" >
@@ -217,7 +218,8 @@
           </a-form>
           </div>
            <div class="operator">
-           <a-table id="table"
+           <a-table v-if="(this.clientType==10 || this.clientType==20)"
+              id="table"
               :columns="columns"
               :rowKey="record => record.clientId"
               :dataSource="dataSource"
@@ -227,21 +229,114 @@
               size="middle"
               :scroll="{ x: 2400 }">
               <span slot="action" slot-scope="record">
-              <a href="javascript:;" @click="openUpdateRecord(record)">修改</a>
+              <a href="javascript:;" @click="openClientEditModal(record,clientType)">修改</a>
+              </span>
+            </a-table>
+            <a-table v-else-if="(this.clientType==30 || this.clientType==40)"
+              id="table"
+              :columns="columnsEx"
+              :rowKey="record => record.clientId"
+              :dataSource="dataSource"
+              :pagination="pagination"
+              :loading="loading"
+              @change="handleTableChange"
+              size="middle"
+              :scroll="{ x: 2400 }">
+              <span slot="action" slot-scope="record">
+              <a href="javascript:;" @click="openClientEditModal(record,clientType)">修改</a>
+              </span>
+            </a-table>
+            <a-table v-else
+              id="table"
+              :columns="columns"
+              :rowKey="record => record.clientId"
+              :dataSource="dataSource"
+              :pagination="pagination"
+              :loading="loading"
+              @change="handleTableChange"
+              size="middle"
+              :scroll="{ x: 2400 }">
+              <span slot="action" slot-scope="record">
+              <a href="javascript:;" @click="openClientEditModal(record,clientType)">修改</a>
+              
               </span>
             </a-table>
           </div>
+          
   </a-drawer>
 </template>
 <script>
 import moment from 'moment'
 import VueCookies from 'vue-cookies'
+import ClientEditModal from './ClientEditModal'
 import { copyReqObj, exportExcel,getAppointCookie } from '../../../utils/common_util'
 import {findBySearchClientSale,findBySearchClientRent,findBySearchClientWantBuy,
 findBySearchClientWantRent,exportBySearchClientSale,exportBySearchClientRent,exportBySearchClientWantBuy,
 exportBySearchClientWantRent,findProvinceList,findCityList,findDistrictList,findStreetList, } from './ClientMsgService'
 const dataSource = []
-const columns = [
+const columns= [
+
+  {
+    title: '客户ID',
+    dataIndex: 'clientId',
+    key: 'clientId',
+    width: 50,
+    fixed: 'left'
+  },
+  {
+    title: '客户名',
+    dataIndex: 'clientName',
+    key: 'clientName',
+  },
+  {
+    title: '客户性别',
+    dataIndex: 'clientSex',
+    key: 'clientSex',
+  },
+  {
+    title: '省',
+    dataIndex: 'clientAddressProvince',
+    key: 'clientAddressProvince'
+  },
+  {
+    title: '市',
+    dataIndex: 'clientAddressCity',
+    key: 'clientAddressCity'
+  },
+  {
+    title: '区',
+    dataIndex: 'clientAddressDistrict',
+    key: 'clientAddressDistrict'
+  },
+  {
+    title: '街',
+    dataIndex: 'clientAddressStreet',
+    key: 'clientAddressStreet'
+  },
+  {
+    title: '客户电话',
+    dataIndex: 'clientPhone',
+    key: 'clientPhone'
+  },
+  {
+    title: '客户备注',
+    dataIndex: 'clientRemark',
+    key: 'clientRemark'
+  },
+  {
+    title: '客户所属员工ID',
+    dataIndex: 'clientStaffId',
+    key: 'clientStaffId'
+  },
+  {
+    title: '操作',
+    key: 'action',
+    fixed: 'right',
+    scopedSlots: { customRender: 'action' },
+    width: 160
+  }
+]
+const columnsEx = [
 
   {
     title: '客户ID',
@@ -335,11 +430,17 @@ const columns = [
 ]
 export default {
     name: 'ClientMsgModal',
+    components: 
+    {
+      ClientEditModal,
+    },
   data () 
   {
     return {
+      form:this.$form.createForm(this),
       visible: false,
       columns: columns,
+      columnsEx:columnsEx,
       dataSource: dataSource,
       loading: false,
       provinceData:[],
@@ -359,15 +460,16 @@ export default {
         
       },
       clientType:'',
-
     }
   },
   mounted () 
   {
     this.getProvince()
+    this.updateOkCallback.bind(this)
   },
   watch:
   {
+    
   },
   methods: 
   {
@@ -701,6 +803,14 @@ export default {
       return (
         option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
       );
+    },
+    openClientEditModal(record,clientType)
+    {
+      this.$refs.ClientEditModal.showModal(record,this.clientType)
+    },
+    // 更新客户信息成功后的反馈
+    updateOkCallback () {
+		  this.reloadTable(1)
     },
   },
 
