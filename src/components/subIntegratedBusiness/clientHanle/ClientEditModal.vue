@@ -1,7 +1,7 @@
 <template>
     <a-drawer
     title='客户编辑'
-	width="40%"
+	  width="40%"
     @close="()=>handleCancel()"
     :destroyOnClose="true"
 	:visible=visible>
@@ -20,16 +20,69 @@
             <a-input v-model="criteria.clientPhone"/>
         </a-form-item>
         <a-form-item label='客户地址省'>
-            <a-input v-model="criteria.clientAddressProvince"/>
+            <a-select 
+                id="houseLocationProvince"
+                style="width: 120px" 
+                showSearch
+                allowClear:true
+                ptionFilterProp="children"
+                @focus="handleProvinceFocus"
+                @change="handleProvinceChange" 
+                @search="handleProvinceSearch"
+                :filterOption="filterOption"
+                v-model="criteria.clientExpectPlaceProvince">
+                  <a-select-option v-for="p in provinceData" :key="p" :value="p">
+                  {{p}}
+                  </a-select-option>
+                </a-select>
         </a-form-item>
         <a-form-item label='客户地址市'>
-            <a-input v-model="criteria.clientAddressCity"/>
+            <a-select
+                id="houseLocationCity"
+                style="width: 120px" 
+                showSearch
+                ptionFilterProp="children"
+                @change="handleCityChange" 
+                @search="handleCitySearch"
+                @focus="handleCityFocus"
+                :filterOption="filterOption"
+                v-model="criteria.clientExpectPlaceCity">
+                  <a-select-option v-for="c in cityData" :key="c" :value="c">
+                  {{c}}
+                  </a-select-option>
+                </a-select>
         </a-form-item>
         <a-form-item label='客户地址区'>
-            <a-input v-model="criteria.clientAddressDistrict"/>
+            <a-select
+                id="houseLocationDistrict" 
+                style="width: 120px"
+                showSearch
+                ptionFilterProp="children"
+                @change="handleDistrictChange" 
+                @search="handleDistrictSearch"
+                @focus="handleDistrictFocus"
+                :filterOption="filterOption"
+                v-model="criteria.clientExpectPlaceDistrict">
+                  <a-select-option v-for="d in districtData" :key="d" :value="d">
+                  {{d}}
+                  </a-select-option>
+                </a-select>
         </a-form-item>
         <a-form-item label='客户地址街道'>
-            <a-input v-model="criteria.clientAddressStreet"/>
+            <a-select
+                id="houseLocationStreet" 
+                style="width: 120px"
+                showSearch
+                ptionFilterProp="children"
+                @change="handleStreetChange" 
+                @search="handleStreetSearch"
+                @focus="handleStreetFocus"
+                :filterOption="filterOption"
+                v-model="criteria.clientExpectPlaceStreet">
+                  <a-select-option v-for="s in streetData" :key="s" :value="s">
+                  {{s}}
+                  </a-select-option>
+                </a-select>
         </a-form-item>
         <a-form-item label='客户备注信息'>
             <a-input v-model="criteria.clientRemark"/>
@@ -58,6 +111,7 @@
     </a-drawer>
 </template>
 <script>
+import { editClientForSale,findProvinceList,findCityList,findDistrictList,findStreetList } from './ClientMsgService'
 const columns= [
 
   {
@@ -242,12 +296,14 @@ export default
         },
         clientType:'',
         form:this.$form.createForm(this),
-
+        provinceData:[],
+        cityData:[],
+        districtData:[],
+        streetData:[],
       }
   },
   mounted()
   {
-      console.log('clientEditModal criteria...',this.criteria)
   },
   computed:
   {
@@ -258,8 +314,10 @@ export default
     showModal(recordParent,recordClientType)
     {
       this.visible = true
-      console.log('recordClientType....',recordClientType)
       this.criteria = recordParent
+      this.clientType=recordClientType
+      this.provinceData.push(this.criteria.clientAddressProvince)
+      // console.log(this.provinceData[0])
     },
     reset()
     {
@@ -269,13 +327,29 @@ export default
     {
       this.visible=false
     },
+    initCriteria()
+    {
+      console.log('inint this.criteria....',this.criteria)
+      this.provinceData.push(this.criteria.clientAddressProvince)
+      console.log('init push....',this.provinceData)
+    },
     handleUpdate()
     {
       console.log('update...')
       let self=this
       if(self.clientType=='10')
       {
-
+        editClientForSale(self.criteria).then(res =>{
+          if (res.status==0) 
+          {
+            self.$message.success('修改成功')
+            self.handleCancel()
+          }else
+          {
+          self.$message.error('修改失败'); 
+          handleCancel() 
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
       }else if(self.clientType=='20')
       {
 
@@ -289,6 +363,127 @@ export default
       {
         self.$message.error('用户类型空')
       }
+    },
+    handleProvinceFocus()
+    {
+      this.getProvince()
+    },
+    handleProvinceChange(value) 
+    {
+      this.criteria.houseLocationProvince=value
+    },
+    handleProvinceSearch()
+    {
+      this.getProvince()
+    },
+    handleCityChange(value) 
+    {
+      this.criteria.houseLocationCity=value
+    },
+    handleCitySearch()
+    {
+      this.getCity()
+    },
+    handleCityFocus()
+    {
+      this.getCity()
+    },
+    handleDistrictChange(value) 
+    {
+      this.criteria.houseLocationDistrict=value
+    },
+    handleDistrictSearch()
+    {
+      this.getDistrict()
+    },
+    handleDistrictFocus()
+    {
+      this.getDistrict()
+    },
+    handleStreetChange(value) 
+    {
+      this.criteria.houseLocationStreet=value
+    },
+    handleStreetSearch()
+    {
+      this.getStreet()
+    },
+    handleStreetFocus()
+    {
+      this.getStreet()
+    },
+    getProvince()
+    {
+      let self=this
+     findProvinceList().then(res=>{
+          if (res) 
+          {
+          self.provinceData=res.data
+          }else
+          { 
+          self.provinceData=[]
+          self.$message.error('获取省级菜单失败'); 
+          console.log('province fail...',res)  
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
+
+    },
+    getCity()
+    {
+      let self=this
+      let province1=self.criteria.houseLocationProvince
+      findCityList (province1).then(res=>{
+          if (res.status==0) 
+          {
+          self.cityData=res.data
+          }else
+          { 
+          self.cityData=[]
+          self.$message.error('获取市菜单失败'); 
+          console.log('city fail...',res)  
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
+
+    },
+    getDistrict()
+    {
+      let self=this
+      let city1=self.criteria.houseLocationCity
+      findDistrictList(city1).then(res=>{
+          if (res.status==0) 
+          {
+          self.districtData=res.data
+          }else
+          { 
+          self.districtData=[]
+          self.$message.error('获取区菜单失败'); 
+          console.log('district fail...',res)  
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
+
+    },
+    getStreet()
+    {
+      let self=this
+      let district1=self.criteria.houseLocationDistrict
+      findStreetList(district1).then(res=>{
+          if (res.status==0) 
+          {
+          self.streetData=res.data
+          }else
+          { 
+          self.streetData=[]
+          self.$message.error('获取街菜单失败'); 
+          console.log('street fail...',res)  
+          }
+          }).catch(err => {console.log(`err is ${err}`)})
+
+    },
+    filterOption(input, option) 
+    {
+      return (
+        option.componentOptions.children[0].text.toLowerCase().indexOf(input.toLowerCase()) >= 0
+      );
     },
   },
 

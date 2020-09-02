@@ -148,3 +148,13 @@ export function findHouseType () {
     }
   })
 }
+
+/*
+*更新卖房客户
+*/
+export function editClientForSale (Req) {
+  return request(('http://localhost:8080/v1/client/editClientForSale'), {
+    method: 'POST',
+    data: Req
+  })
+}

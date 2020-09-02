@@ -272,7 +272,7 @@ import ClientEditModal from './ClientEditModal'
 import { copyReqObj, exportExcel,getAppointCookie } from '../../../utils/common_util'
 import {findBySearchClientSale,findBySearchClientRent,findBySearchClientWantBuy,
 findBySearchClientWantRent,exportBySearchClientSale,exportBySearchClientRent,exportBySearchClientWantBuy,
-exportBySearchClientWantRent,findProvinceList,findCityList,findDistrictList,findStreetList, } from './ClientMsgService'
+exportBySearchClientWantRent,findProvinceList,findCityList,findDistrictList,findStreetList } from './ClientMsgService'
 const dataSource = []
 const columns= [
 
