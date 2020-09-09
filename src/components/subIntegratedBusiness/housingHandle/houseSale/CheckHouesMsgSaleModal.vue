@@ -431,6 +431,19 @@ export default {
       pagination: { totalSize: p.total, pageSize: p.pageSize, pageNo: currentPageNo, sortColumn: p.sortColumn, sort: p.sort },
       criteria
     }
+    let originalCookie=getAppointCookie('backStaffCookie')
+    if(originalCookie==null)
+    {
+      self.$message.error('未登录!')
+      return
+    }
+    let transcodeCookie=decodeURIComponent(originalCookie)
+    let staffMsg = JSON.parse(transcodeCookie)
+    if(staffMsg.staffId==null || staffMsg.staffId=='')
+    {
+      self.$message.error('当前登录状态空!')
+      return
+    }
         findBySearch(pageReq).then(res => {
           self.loading = false
           if (res.data) {
@@ -504,6 +517,19 @@ export default {
     exportExcelHouseSaleMsg() 
     {
       let self=this
+      let originalCookie=getAppointCookie('backStaffCookie')
+      if(originalCookie==null)
+      {
+        self.$message.error('未登录!')
+        return
+      }
+      let transcodeCookie=decodeURIComponent(originalCookie)
+      let staffMsg = JSON.parse(transcodeCookie)
+      if(staffMsg.staffId==null || staffMsg.staffId=='')
+      {
+        self.$message.error('当前登录状态空!')
+        return
+      }
       let req=this.criteria
         exportBySearch(req).then(res => {
           self.loading = false
@@ -522,7 +548,8 @@ export default {
     },
     openUpdateHouse()
     {
-      
+      this.$message.warning('我还没做')
+      return
     },
     getProvince()
     {

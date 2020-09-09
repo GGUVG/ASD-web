@@ -466,6 +466,7 @@ export default {
   {
     this.getProvince()
     this.updateOkCallback.bind(this)
+    console.log(this)
   },
   watch:
   {
@@ -508,6 +509,19 @@ export default {
     const pageReq = {
       pagination: { totalSize: p.total, pageSize: p.pageSize, pageNo: currentPageNo, sortColumn: p.sortColumn, sort: p.sort },
       criteria
+    }
+    let originalCookie=getAppointCookie('backStaffCookie')
+    if(originalCookie==null)
+    {
+      self.$message.error('未登录!')
+      return
+    }
+    let transcodeCookie=decodeURIComponent(originalCookie)
+    let staffMsg = JSON.parse(transcodeCookie)
+    if(staffMsg.staffId==null || staffMsg.staffId=='')
+    {
+      self.$message.error('当前登录状态空!')
+      return
     }
     if(self.clientType==10)
     {

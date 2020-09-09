@@ -4,7 +4,7 @@ import {request,exportRequest} from '../../../../utils/RestClient'
 *根据条件分页查询
 */
 export function findBySearch (pageReq) {
-    return request(('http://localhost:8080/v1/house/forSale/findPageHouseForSale'), {
+    return request(('http://localhost:9091/v1/house/forSale/findPageHouseForSale'), {
       method: 'POST',
       data: pageReq
     })
@@ -14,7 +14,7 @@ export function findBySearch (pageReq) {
 *根据条件查询结果导出excel
 */
   export function exportBySearch (pageReq) {
-    return exportRequest(('http://localhost:8080/v1/house/forSale/exportFindHouseForSale'), {
+    return exportRequest(('http://localhost:9091/v1/house/forSale/exportFindHouseForSale'), {
       method: 'POST',
       data: pageReq,
       responseType: 'arraybuffer'
@@ -25,7 +25,7 @@ export function findBySearch (pageReq) {
 *获取省级列表
 */
   export function findProvinceList () {
-    return request(('http://localhost:8080/v1/sys/Site/findProvinceList'), {
+    return request(('http://localhost:9091/v1/sys/Site/findProvinceList'), {
       method: 'POST'
     })
   }
@@ -34,7 +34,7 @@ export function findBySearch (pageReq) {
 *获取市级列表
 */
   export function findCityList (req) {
-    return request(('http://localhost:8080/v1/sys/Site/findCityList'), {
+    return request(('http://localhost:9091/v1/sys/Site/findCityList'), {
       method: 'POST',
       data: req,
       headers:{
@@ -48,7 +48,7 @@ export function findBySearch (pageReq) {
 *获取区级列表
 */
   export function findDistrictList (req) {
-    return request(('http://localhost:8080/v1/sys/Site/findDistrictList'), {
+    return request(('http://localhost:9091/v1/sys/Site/findDistrictList'), {
       method: 'POST',
       data: req,
       headers:{
@@ -62,7 +62,7 @@ export function findBySearch (pageReq) {
 *获取街级列表
 */
   export function findStreetList (req) {
-    return request(('http://localhost:8080/v1/sys/Site/findStreetList'), {
+    return request(('http://localhost:9091/v1/sys/Site/findStreetList'), {
       method: 'POST',
       data: req,
       headers:{
@@ -76,7 +76,7 @@ export function findBySearch (pageReq) {
 *获取房屋类型列表
 */
   export function findHouseType () {
-    return request(('http://localhost:8080/v1/sys/HouseType/findHouseType'), 
+    return request(('http://localhost:9091/v1/sys/HouseType/findHouseType'), 
     {
       method: 'POST',
       headers:{

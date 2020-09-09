@@ -256,6 +256,78 @@ export default {
     submitNewHouse(ruleForm)
     {
       let self=this
+      let originalCookie=getAppointCookie('backStaffCookie')
+      if(originalCookie==null)
+      {
+        self.$message.error('未登录!')
+        return
+      }
+      let transcodeCookie=decodeURIComponent(originalCookie)
+      let staffMsg = JSON.parse(transcodeCookie)
+      if(staffMsg.staffId==null || staffMsg.staffId=='')
+      {
+        self.$message.error('当前登录状态空!')
+        return
+      }
+      if(self.criteria.houseType==null || self.criteria.houseType=='')
+      {
+        self.$message.warning('房屋类型未填!')
+        return
+      }
+      if(self.criteria.houseType==null || self.criteria.houseType=='')
+      {
+        self.$message.warning('房屋类型未填!')
+        self.submitBtnCheck=false
+        return
+      }
+      if(self.criteria.estateId==null || self.criteria.estateId=='')
+      {
+        self.$message.warning('小区ID未填!')
+        self.submitBtnCheck=false
+        return
+      }
+      if(self.criteria.houseName==null || self.criteria.houseName=='')
+      {
+        self.$message.warning('门牌号未填!')
+        self.submitBtnCheck=false
+        return
+      }
+      if(self.criteria.completeTime==null || self.criteria.completeTime=='')
+      {
+        self.$message.warning('建成时间未填!')
+        self.submitBtnCheck=false
+        return
+      }
+      if(self.criteria.completeTime.length<4)
+      {
+        self.$message.warning('校验建成时间!')
+        self.submitBtnCheck=false
+        return
+      }
+      if(self.criteria.houseLocationProvince==null || self.criteria.houseLocationProvince=='')
+      {
+        self.$message.warning('省位置未填!')
+        self.submitBtnCheck=false
+        return
+      }
+      if(self.criteria.housePrice==null || self.criteria.housePrice=='')
+      {
+        self.$message.warning('价格未填!')
+        self.submitBtnCheck=false
+        return
+      }
+      if(self.criteria.houseSquare==null || self.criteria.houseSquare=='')
+      {
+        self.$message.warning('面积未填!')
+        self.submitBtnCheck=false
+        return
+      }
+      if(self.criteria.houseClientId==null || self.criteria.houseClientId=='')
+      {
+        self.$message.warning('客户(出售)未填!')
+        self.submitBtnCheck=false
+        return
+      }
       let mandateSuffix=self.fileList[0].name
       console.log('mandateSuffix...',mandateSuffix)
       self.$refs[ruleForm].validate(vaild =>{

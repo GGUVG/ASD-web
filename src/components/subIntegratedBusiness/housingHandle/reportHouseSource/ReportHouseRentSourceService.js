@@ -4,7 +4,7 @@ import {request,exportRequest} from '../../../../utils/RestClient'
 *新建新租赁房源审批报备
 */
 export function addHouseSource(Req) {
-    return request(('http://localhost:8080/v1/house/forRent/reportNewSource'), {
+    return request(('http://localhost:9091/v1/house/forRent/reportNewSource'), {
       method: 'POST',
       data: Req
     })
@@ -14,7 +14,7 @@ export function addHouseSource(Req) {
 *上传文件
 */
 export function uploadHouseRentFile (Req) {
-  return request(('http://localhost:8080/v1/house/forRent/uploadHouseRentFile'), {
+  return request(('http://localhost:9091/v1/house/forRent/uploadHouseRentFile'), {
     method: 'POST',
     data: Req,
     headers:{
@@ -26,7 +26,7 @@ export function uploadHouseRentFile (Req) {
 *获取省级列表
 */
 export function findProvinceList () {
-  return request(('http://localhost:8080/v1/sys/Site/findProvinceList'), {
+  return request(('http://localhost:9091/v1/sys/Site/findProvinceList'), {
     method: 'POST'
   })
 }
@@ -35,7 +35,7 @@ export function findProvinceList () {
 *获取市级列表
 */
 export function findCityList (req) {
-  return request(('http://localhost:8080/v1/sys/Site/findCityList'), {
+  return request(('http://localhost:9091/v1/sys/Site/findCityList'), {
     method: 'POST',
     data: req,
     headers:{
@@ -49,7 +49,7 @@ export function findCityList (req) {
 *获取区级列表
 */
 export function findDistrictList (req) {
-  return request(('http://localhost:8080/v1/sys/Site/findDistrictList'), {
+  return request(('http://localhost:9091/v1/sys/Site/findDistrictList'), {
     method: 'POST',
     data: req,
     headers:{
@@ -63,7 +63,7 @@ export function findDistrictList (req) {
 *获取街级列表
 */
 export function findStreetList (req) {
-  return request(('http://localhost:8080/v1/sys/Site/findStreetList'), {
+  return request(('http://localhost:9091/v1/sys/Site/findStreetList'), {
     method: 'POST',
     data: req,
     headers:{
@@ -77,7 +77,7 @@ export function findStreetList (req) {
 *获取房屋类型列表
 */
 export function findHouseType () {
-  return request(('http://localhost:8080/v1/sys/HouseType/findHouseType'), 
+  return request(('http://localhost:9091/v1/sys/HouseType/findHouseType'), 
   {
     method: 'POST',
     headers:{
@@ -91,7 +91,7 @@ export function findHouseType () {
 *获取小区列表
 */
 export function findEstateByName (req) {
-  return request(('http://localhost:8080/v1/estate/findEstateList'), 
+  return request(('http://localhost:9091/v1/estate/findEstateList'), 
   {
     method: 'POST',
     data: req,

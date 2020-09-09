@@ -335,8 +335,20 @@ export default
     },
     handleUpdate()
     {
-      console.log('update...')
       let self=this
+      let originalCookie=getAppointCookie('backStaffCookie')//原始cookie
+      if(originalCookie==null)
+      {
+        self.$message.error('未登录!')
+        return
+      }
+      let transcodeCookie=decodeURIComponent(originalCookie)
+      let staffMsg = JSON.parse(transcodeCookie)
+      if(staffMsg.staffId==null || staffMsg.staffId=='')
+      {
+        self.$message.error('当前登录状态空!')
+        return
+      }
       if(self.clientType=='10')
       {
         editClientForSale(self.criteria).then(res =>{
