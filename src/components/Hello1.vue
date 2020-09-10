@@ -53,7 +53,6 @@
               <a-menu-item key="propertyRegister">物业登记</a-menu-item>
               <a-menu-item key="propertySearch">物业查询</a-menu-item>
           </a-sub-menu>
-          
         </a-sub-menu>
         <a-sub-menu key="payrollAttendacne">
           <span slot="title"><a-icon type="dollar"/><span>工资考勤</span></span>
@@ -108,6 +107,15 @@
           </a-menu-item>
           <a-menu-item key="linkTest">
             <router-link to="/newVue">测试页面跳转</router-link>
+          </a-menu-item>
+        </a-sub-menu>
+        <a-sub-menu key="welfare">
+          <span slot="title"><a-icon type="car" /><span>福利</span></span>
+          <a-menu-item key="gorgeousPhotography">
+            <a-icon type="camera"/><span @click="onOpenGorgeousPhotography">写真</span>
+          </a-menu-item>
+          <a-menu-item key="gorgeousMoviesXXX">
+            <a-icon type="play-square"/><span @click="onOpenGorgeousMoviesXXX">片</span>
           </a-menu-item>
         </a-sub-menu>
       </a-menu>
@@ -268,6 +276,14 @@ export default {
     {
       console.log(VueCookies.keys())
     },
+    onOpenGorgeousPhotography()
+    {
+      this.$message.warning('还没开车呢')
+    },
+    onOpenGorgeousMoviesXXX()
+    {
+      this.$message.warning('还没开车呢')
+    }
   },
 
 };
