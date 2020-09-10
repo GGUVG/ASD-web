@@ -103,6 +103,12 @@
           <a-menu-item key="checkCookie">
             <span @click="checkCookie"><a-icon type="branches" />测试cookie</span>
           </a-menu-item>
+          <a-menu-item key="getUserMsg">
+            <span @click="getUserMsg"><a-icon type="branches" />获取当前登录者信息</span>
+          </a-menu-item>
+          <a-menu-item key="linkTest">
+            <router-link to="/newVue">测试页面跳转</router-link>
+          </a-menu-item>
         </a-sub-menu>
       </a-menu>
     </a-layout-sider>
@@ -115,10 +121,7 @@
         />
       </a-layout-header>
       <a-layout-content style="margin: 0 16px">
-      <slot >
-        <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
-          <img src="../assets/main.jpg"/>
-        </div>
+        <slot name="middleContent">
       </slot>
       </a-layout-content>
       <a-layout-footer style="text-align: center">
@@ -140,6 +143,7 @@ import StaffLogin from './StaffLogin.vue'
 import Cookies from 'js-cookie'
 import VueCookies from 'vue-cookies'
 import { getCookie } from '../utils/utils'
+
 
 export default {
   name: 'Hello1',
@@ -167,7 +171,7 @@ export default {
     {
       let self = this
       axios({
-          url: "http://localhost:8080/v1/testApi/test1",
+          url: "http://localhost:8091/v1/testApi/test1",
           method: "POST",
           data:'',
           headers:
@@ -190,7 +194,7 @@ export default {
     {
       let self = this
       axios({
-          url: "http://localhost:8080/v1/testApi/testConnectMysql",
+          url: "http://localhost:8091/v1/testApi/testConnectMysql",
           method: "POST",
           data:'',
           headers:
@@ -208,6 +212,33 @@ export default {
           self.$message.error('fail');   
           }
                        }).catch(err => {console.log(`err is ${err}`)})
+    },
+    getUserMsg()
+    {
+      let self = this
+      axios({
+          url: "http://localhost:9091/v1/sys/user/getCurrentUser",
+          method: "POST",
+          data:'',
+          headers:
+          {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json; charset=utf-8',
+          }
+          }).then(res=>{
+            // console.log('获取登录信息res',res)
+            if(res.data.status==0)
+            {
+              let ret=res.data.data
+              self.$message.success('欢迎:'+ret.staffUsername)
+              console.log('success login Msg:',ret)
+            }else{
+              self.$message.error('获取当前登陆者信息失败:',res.data.message)
+            }
+          })
+    },
+    linkTest(){
+
     },
     staffLogin()
     {
