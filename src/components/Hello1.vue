@@ -179,7 +179,7 @@ export default {
     {
       let self = this
       axios({
-          url: "http://localhost:8091/v1/testApi/test1",
+          url: "http://localhost:9091/v1/testApi/test1",
           method: "POST",
           data:'',
           headers:
@@ -202,7 +202,7 @@ export default {
     {
       let self = this
       axios({
-          url: "http://localhost:8091/v1/testApi/testConnectMysql",
+          url: "http://localhost:9091/v1/testApi/testConnectMysql",
           method: "POST",
           data:'',
           headers:

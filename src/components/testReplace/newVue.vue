@@ -2,7 +2,7 @@
     <Hello>
     <template slot="middleContent">
     <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
-        <img src='../../assets/main.jpg'/>
+        <img src='../../assets/vueJs.png'/>
     </div>
     </template>
     </Hello>
@@ -20,7 +20,7 @@ export default {
     data () 
     {
         return{
-            str1:'this is a new Vue'
+            str1:'this is a new Vue replace test'
         }
     },
     methods:{
