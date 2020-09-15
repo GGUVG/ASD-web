@@ -110,12 +110,12 @@
           </a-menu-item>
         </a-sub-menu>
         <a-sub-menu key="welfare">
-          <span slot="title"><a-icon type="car" /><span>福利</span></span>
+          <span slot="title"><a-icon type="car" /><span><!--标题--></span></span>
           <a-menu-item key="gorgeousPhotography">
-            <a-icon type="camera"/><span @click="onOpenGorgeousPhotography">写真</span>
+            <span @click="onPoenGorgeousImg()"><a-icon type="camera" />图库</span>
           </a-menu-item>
           <a-menu-item key="gorgeousMoviesXXX">
-            <a-icon type="play-square"/><span @click="onOpenGorgeousMoviesXXX">片</span>
+            <span @click="onOpenGorgeousMoviesXXX()"><a-icon type="youtube" />视频</span>
           </a-menu-item>
         </a-sub-menu>
       </a-menu>
@@ -276,9 +276,14 @@ export default {
     {
       console.log(VueCookies.keys())
     },
-    onOpenGorgeousPhotography()
+    onPoenGorgeousImg()
     {
-      this.$message.warning('还没开车呢')
+      this.$router.push({
+        path: '/ArticleList',
+        query: {
+
+        }
+      })
     },
     onOpenGorgeousMoviesXXX()
     {

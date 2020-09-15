@@ -4,6 +4,9 @@
     <div :style="{ padding: '24px', background: '#fff', minHeight: '360px' }">
         <img src='../../assets/vueJs.png'/>
     </div>
+    <div>
+        <span>测试页面跳转</span>
+    </div>
     </template>
     </Hello>
 </template>
