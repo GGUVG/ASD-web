@@ -5,8 +5,7 @@
       <div class="logo" />
       <a-menu theme="dark" :default-selected-keys="['1']" mode="inline">
         <a-menu-item key="toMain">
-          <a-icon type="home" />
-          <span>首页</span>
+          <router-link :to="'/'">首页</router-link>
         </a-menu-item>
         <a-sub-menu key="subIntegratedBusiness">
           <span slot="title"><a-icon type="menu-unfold" /><span>综合业务</span></span>
@@ -113,6 +112,7 @@
           <span slot="title"><a-icon type="car" /><span><!--标题--></span></span>
           <a-menu-item key="gorgeousPhotography">
             <span @click="onPoenGorgeousImg()"><a-icon type="camera" />图库</span>
+            <!-- <router-link :to="'/ArticleList'" replace><a-icon type="camera" />图库</router-link> -->
           </a-menu-item>
           <a-menu-item key="gorgeousMoviesXXX">
             <span @click="onOpenGorgeousMoviesXXX()"><a-icon type="youtube" />视频</span>
@@ -279,10 +279,7 @@ export default {
     onPoenGorgeousImg()
     {
       this.$router.push({
-        path: '/ArticleList',
-        query: {
-
-        }
+        path: '/ArticleList'
       })
     },
     onOpenGorgeousMoviesXXX()
