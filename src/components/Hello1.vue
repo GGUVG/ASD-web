@@ -130,10 +130,13 @@
       </a-layout-header>
       <a-layout-content style="margin: 0 16px">
         <slot name="middleContent">
+        <div :style="{ padding: '60px', background: '#fff', minHeight: '360px'}" style="text-align:center">
+        <img src='../assets/main.jpg'/>
+        </div>
       </slot>
       </a-layout-content>
       <a-layout-footer style="text-align: center">
-        Ant Design ©2018 Created by Ant UED
+        <a href="https://github.com/GGUVG/asd-web">https://github.com/GGUVG/asd-web</a>
       </a-layout-footer>
     </a-layout>
   </a-layout>

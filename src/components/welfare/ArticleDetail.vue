@@ -23,13 +23,15 @@
         </a-descriptions-item>
     </a-descriptions>
     <template>
-    <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="imgList" style="text-align:center">
+    <a-list 
+    item-layout="vertical" 
+    size="large" :pagination="pagination" :data-source="imgList" style="text-align:center" >
         <a-list-item slot="renderItem" key="item.title" slot-scope="item">
         <img :src="item.photoName"  style="width: auto;height: auto;" alt="avatar" />
         </a-list-item>
     </a-list>
     </template>
-    <a-descriptions title="相关标签" :column=1>
+    <a-descriptions title="相关标签" :column=4>
         <a-descriptions-item>
         <a-tag color="pink"><a @click="findArticleListByTag1(article.keyWord1)" style="cursor:pointer">{{article.keyWord1}}</a></a-tag>
         </a-descriptions-item>
@@ -73,13 +75,12 @@ data ()
 
         },
         imgList:[],
-        pagination: 
-      {
-        total: 0,
-        pageSize: 7,
-        current: 1,
-        sortColumn: null,
-        sort: 1
+        pagination: {
+        // total: 0,
+        pageSize: 5,
+        // current: 1,
+        // sortColumn: null,
+        // sort: 1
       },
       criteria:{
         articleId:null
@@ -89,6 +90,7 @@ data ()
 methods:{
     reloadImgList(pageNo)
     {
+
         let self=this
         let p = self.pagination
         let currentPageNo = pageNo || p.current
@@ -98,7 +100,7 @@ methods:{
         criteria
         }
         findWelfareImgByPage(pageReq).then(res=>{
-            // console.log('reloadImgList res...',res)
+            console.log('reloadImgList res...',res)
             if(res.status==0)
             {
                 let ret=res.data.rows
@@ -107,13 +109,19 @@ methods:{
                 self.imgList.map(val=>{
                   val.photoName = 'http://127.0.0.1:9092/welfare/' + val.photoName
                 })
-                // console.log('imgList:...',self.imgList)
+                let pag = res.data.pagination
+                self.pagination = { total: pag.totalSize, pageSize: pag.pageSize, current: pag.pageNo,onChange:self.handleTableChange }
             }else
             {
                 self.$message.error('加载图片列表失败!'+res.message)
                 return
             }
         })
+    },
+    handleTableChange(page)
+    {
+    //   console.log(page)
+      this.reloadImgList(page)
     },
     findArticleListByTag1(tag)
     {

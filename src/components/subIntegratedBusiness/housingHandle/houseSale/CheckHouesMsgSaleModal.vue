@@ -448,6 +448,7 @@ export default {
           self.loading = false
           if (res.data) {
             const ret = res.data
+            console.log('asadasdasd',ret)
             self.dataSource = ret.rows
             const pag = ret.pagination
             self.pagination = { total: pag.totalSize, pageSize: pag.pageSize, current: pag.pageNo }

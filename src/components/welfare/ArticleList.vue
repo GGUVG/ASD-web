@@ -2,8 +2,28 @@
     <Hello1>
     <template slot="middleContent">
         <template>
-        <a-list item-layout="vertical" size="large" :pagination="pagination" :data-source="articleList">
-        <div slot="footer"><b>www.baidu.com</b> 百度一下,你就知道</div>
+        <a-layout>
+        <a-layout-content>
+        <a-list item-layout="vertical" size="small" :pagination="pagination" :data-source="articleList">
+        <div slot="header">
+            <a-row>
+                <a-col :md="6" :sm="24">
+                <a-switch 
+                checked-children="开" 
+                un-checked-children="关" 
+                :default-checked="true" 
+                v-model="welfareOpenCheck"
+                @change="changeWelfareOpenCheck"/>
+                </a-col>
+                <a-col :md="6" :sm="24">
+                <a-input v-model="criteria.title" allowClear/>
+                </a-col>
+                <a-col :md="6" :sm="24">
+                <a-button type="primary" @click="reloadArticleList(1)">搜索</a-button>
+                </a-col>
+            </a-row>
+            
+        </div>
             <a-list-item slot="renderItem" key="item.title" slot-scope="item">
             <!--解决浏览器Not allowed to load local resource 
               https://blog.csdn.net/alazyperson/article/details/105905824?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.edu_weight&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.edu_weight 
@@ -20,6 +40,13 @@
         {{ item.content }}
         </a-list-item>
         </a-list>
+        </a-layout-content>
+        <a-layout-sider theme=light width=400>
+            <a-list item-layout="vertical" size="small" :data-source="randomArticleList">
+
+            </a-list>
+        </a-layout-sider>
+        </a-layout>
         </template>
     </template>
     </Hello1>
@@ -65,17 +92,20 @@ data ()
     return{
       listData,
       articleList:[],
+      randomArticleList:[],
       avatarImg:avatarBgImg,
       criteria:{
+        title:''
       },
       pagination: 
       {
-        total: 0,
-        pageSize: 7,
-        current: 1,
-        sortColumn: null,
-        sort: 1
+        // total: 0,
+        pageSize: 5,
+        // current: 1,
+        // sortColumn: null,
+        // sort: 1
       },
+      welfareOpenCheck:false
     }
 },
 methods:{
@@ -84,6 +114,10 @@ methods:{
     let self=this
     let p = self.pagination
     let currentPageNo = pageNo || p.current
+    if(this.welfareOpenCheck==false)
+    {
+        self.criteria.title='示例标题'
+    }
     let criteria = self.criteria
     let pageReq = {
       pagination: { totalSize: p.total, pageSize: p.pageSize, pageNo: currentPageNo, sortColumn: p.sortColumn, sort: p.sort },
@@ -99,14 +133,23 @@ methods:{
                 self.articleList.map(val=>{
                   val.bgImg = 'http://127.0.0.1:9092/welfare/' + val.bgImg
                 })
-                // self.$message.success('加载文章列表...')
-                // console.log('articleList:...',self.articleList)
+                let pag = res.data.pagination
+                self.pagination = { total: pag.totalSize, pageSize: pag.pageSize, current: pag.pageNo,onChange:self.handleTableChange }
             }else
             {
                 self.$message.error('加载文章列表失败!'+res.message)
                 return
             }
         })
+    },
+    handleTableChange(page)
+    {
+      this.reloadArticleList(page)
+    },
+    changeWelfareOpenCheck(checked)
+    {
+        this.welfareOpenCheck=checked
+        this.criteria.title=''
     },
     openArticleDetail(item)
     {
