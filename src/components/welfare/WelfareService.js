@@ -19,3 +19,25 @@ export function findArticleByPage (req) {
       data: req
     })
 }
+
+/*
+*新增文章
+*/
+export function submitNewArticle(req) {
+  return request(('http://localhost:9091/v1/welfare/submitNewArticle'), {
+    method: 'POST',
+    data: req
+  })
+}
+
+/*
+*上传文件
+*/
+export function uploadImgFile (req) {
+  return request(('http://localhost:9091/v1/welfare/uploadNewImg'), {
+    method: 'POST',
+    data: req,
+    headers:{
+    'Content-Type': 'multipart/form-data'}
+  })
+}

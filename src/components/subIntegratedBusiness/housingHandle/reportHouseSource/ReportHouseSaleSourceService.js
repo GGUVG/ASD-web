@@ -1,7 +1,7 @@
 import {request,exportRequest} from '../../../../utils/RestClient'
 
 /*
-*根据条件分页查询
+*新增房源
 */
 export function addHouseSource(Req) {
     return request(('http://localhost:9091/v1/house/forSale/reportNewSource'), {

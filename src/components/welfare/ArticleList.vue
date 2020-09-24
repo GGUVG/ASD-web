@@ -2,6 +2,7 @@
     <Hello1>
     <template slot="middleContent">
         <template>
+        <PublishNewArticle ref="PublishNewArticle"></PublishNewArticle>
         <a-layout>
         <a-layout-content>
         <a-list item-layout="vertical" size="small" :pagination="pagination" :data-source="articleList">
@@ -21,10 +22,13 @@
                 <a-col :md="6" :sm="24">
                 <a-button type="primary" @click="reloadArticleList(1)">搜索</a-button>
                 </a-col>
+                <a-col :md="6" :sm="24">
+                <a-button type="primary" @click="toUpdate()">上传</a-button>
+                </a-col>
             </a-row>
             
         </div>
-            <a-list-item slot="renderItem" key="item.title" slot-scope="item">
+        <a-list-item slot="renderItem" key="item.title" slot-scope="item">
             <!--解决浏览器Not allowed to load local resource 
               https://blog.csdn.net/alazyperson/article/details/105905824?utm_medium=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.edu_weight&depth_1-utm_source=distribute.pc_relevant_t0.none-task-blog-BlogCommendFromMachineLearnPai2-1.edu_weight 
             -->
@@ -54,12 +58,13 @@
 <script>
 const listData = []
 import Hello1 from '../Hello1'
+import PublishNewArticle from './PublishNewArticle'
 import {findArticleByPage,findWelfareImgByPage} from './WelfareService'
 import avatarBgImg from '../../assets/img/avatar/IMG_20180820_164059.jpg'
 export default {
-name:'newVue',
+name:'ArticleList',
 components:{
-    Hello1
+    Hello1,PublishNewArticle
 },
 created()
 {
@@ -162,6 +167,10 @@ methods:{
         }
       })
     },
+    toUpdate()
+    {
+        this.$refs.PublishNewArticle.showModal()
+    }
 }
 }
 </script>
